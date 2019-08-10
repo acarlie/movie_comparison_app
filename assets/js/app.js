@@ -55,6 +55,7 @@ $(document).ready(function(){
 
 });
 var app = {
+    compare: false,
     addMovie(el){
         event.preventDefault();
         var movie = el.val();
@@ -62,9 +63,11 @@ var app = {
         el.val('');
     },
     generateButtons(movie){
-        var button = $('<button>').addClass('waves-effect waves-light btn').text(movie).attr('data-id', movie);
-        $('#addedMovies').prepend(button);
-        console.log(button);
+        var wrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
+        var title = $('<h4>').addClass('movie-title').text(movie);
+        var btnDelete = $('<button>').addClass('waves-effect waves-teal btn-flat button-delete').html('<i class="material-icons">close</i>');
+        wrap.append(title, btnDelete);
+        $('#addedMovies').prepend(wrap);
     },
     compare(){
         event.preventDefault();
@@ -80,7 +83,13 @@ $('#addMovie').keypress(function(e){
     } 
 });
 
+$(document).on('click', '.button-delete', function(){
+    event.preventDefault();
+    $(this).parent().remove();
+})
+
 $('#compareMovies').on('click', app.compare);
+
 // needs more work once HTML is finished
 var movie = "trolls" 
 
