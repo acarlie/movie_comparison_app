@@ -31,6 +31,10 @@ var app = {
         //generate comparison page
     },
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
+        
+        for (var i = 0; i <2; i++) {
+
+        var movie = app.moviesArray
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
 
         $.ajax({
@@ -44,8 +48,12 @@ var app = {
             console.log(ratingValue);
             
         });
+    
+    
+        }
     }
 }
+
 
 
 $(document).ready(function(){
@@ -60,9 +68,8 @@ $(document).ready(function(){
         } 
     });
 
-    // needs more work once HTML is finished
-    var movie = "Die Hard"; 
-
+    for (var i = 0; i < 2 ; i++) {
+    var movie = app.moviesArray[i]
     var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
 
     $.ajax({
@@ -71,11 +78,16 @@ $(document).ready(function(){
     }).then(function(response) {
         var ratingName = response.Ratings[0].Source;
         var ratingValue = response.Ratings[0].Value;
+        var valueNumber = ratingValue.slice(0,3);
+
         console.log(response)
         console.log(ratingName);
         console.log(ratingValue);
+        console.log(valueNumber)
         
     });
+    }
+    
 
 
 	$.ajax({
