@@ -1,3 +1,182 @@
-.movie-title{
-    display: inline-block;
+/*Css is set-up mobile first, for laptop/desktop styling see media queries*/
+
+*{
+    box-sizing: border-box;
 }
+
+/*css variables*/
+:root{
+    --color-primary: #ee0979;
+    --color-light: #fff;
+    --color-light-trans: rgba(255,255,255,.6);
+    --color-dark: #333;
+    --color-dark-trans: rgba(0,0,0, .5);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h4, h5, h6 {
+    font-weight: 500;
+}
+
+.wrapper{
+    min-height: 100vh;
+}
+
+.container{
+    width: 90%;
+}
+
+#search-wrap{
+    /* background: #232526;  
+    background: -webkit-linear-gradient(180deg, #343434, #131313); 
+    background: linear-gradient(180deg, #343434, #131313); */
+
+    /* background: #cb2d3e; 
+    background: -webkit-linear-gradient(to right, #ef473a, #cb2d3e);  
+    background: linear-gradient(to right, #ef473a, #cb2d3e);  */
+
+    /* background: #56CCF2;  
+    background: -webkit-linear-gradient(-30deg, #2F80ED, #56CCF2); 
+    background: linear-gradient(-30deg, #2F80ED, #56CCF2);  */
+
+    background: #ee0979; 
+    background: -webkit-linear-gradient(to right, #ff6a00, #ee0979); 
+    background: linear-gradient(to right, #ff6a00, #ee0979); 
+
+}
+
+.row{
+    margin-bottom: 0;
+}
+
+#search-wrap, #search-wrap input{
+    color: var(--color-light);
+}
+
+#results-wrap{
+    background: #ccc;
+}
+
+
+/*-------------------Custom Buttons-------------------*/
+.button{
+    font-size: 1.125em;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+}
+
+.button:focus{
+    outline:0;
+}
+
+.button-block{
+    width: 100%;
+}
+
+.button-outline{
+    border: 1px solid var(--color-light);
+}
+
+.button-outline:hover{
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    box-shadow: none;
+}
+
+/*-------------------Movie Wrapper-------------------*/
+.movie-wrap{
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+    color: var(--color-dark);
+    background: var(--color-light);
+    box-shadow: 5px 5px var(--color-primary);
+}
+
+.movie-title-wrap{
+    display: flex;
+    padding-bottom: .5em;
+    margin-bottom: .5em;
+    border-bottom: 1px solid var(--color-dark-trans);
+}
+
+.movie-title{
+    width: 100%;
+    text-transform: capitalize;
+}
+
+.movie-wrap .button{
+    color: var(--color-dark);
+}
+
+.movie-wrap .button:focus{
+    background: none;
+}
+
+
+/*-------------------Input Color Overrides-------------------*/
+/* label color */
+.movie-form .input-field label {
+    color: var(--color-light-trans);
+}
+
+/* label focus color */
+.movie-form .input-field input[type=text]:focus+label {
+    color: var(--color-light);
+}
+
+/* label underline focus color */
+.movie-form .input-field input[type=text]{
+    border-bottom: 1px solid var(--color-light-trans);
+}
+
+/* label underline focus color */
+.movie-form .input-field input[type=text]:focus {
+    border-bottom: 1px solid var(--color-light);
+    box-shadow: 0 1px 0 0 var(--color-light);
+}
+
+/* valid color */
+.movie-form .input-field input[type=text].valid {
+    border-bottom: 1px solid var(--color-light);
+    box-shadow: 0 1px 0 0 var(--color-light);
+}
+
+/* invalid color */
+.movie-form .input-field input[type=text].invalid {
+    border-bottom: 1px solid var(--color-light-trans);
+    box-shadow: 0 1px 0 0 var(--color-light-trans);
+}
+
+/* icon prefix focus color */
+.movie-form .input-field .prefix.active {
+    color: var(--color-light);
+}
+
+
+/*---------------Media Queries---------------*/
+/*Desktop*/
+@media only screen and (min-width: 1024px) {
+    .container{
+        width: 50%;
+    }
+}
+
+/*Tablet/Ipad*/
+@media only screen and (max-width: 1023px) and (min-width: 768px) {
+    .container{
+        width: 70%;
+    }
+}
+
+/* 
+@media only screen and (max-width: 767px) and (min-width: 540px) {
+ 
+} */

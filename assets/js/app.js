@@ -2,16 +2,17 @@ var app = {
     compare: false,
     moviesArray:[],
     addMovie(el){
+        //We'll need to check OMDB to see if Movie exists and get the plot, if movie doesn't exist we'll need to tell the user it can't be found
         event.preventDefault();
         var movie = el.val();
         this.moviesArray.push(movie);
-        app.generateButtons(movie);
+        app.movieCards(movie);
         el.val('');
     },
     deleteAddedMovie(){
         event.preventDefault();
-        $(this).parent().remove();
-        var dataId = $(this).parent().attr('data-id');
+        $(this).parent().parent().remove();
+        var dataId = $(this).parent().parent().attr('data-id');
         app.moviesArray = app.arrayRemove(app.moviesArray, dataId);
     },
     arrayRemove(arr, value) {
@@ -19,15 +20,19 @@ var app = {
             return ele != value;
         });
     },
-    generateButtons(movie){
-        var wrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
-        var title = $('<h4>').addClass('movie-title').text(movie);
-        var btnDelete = $('<button>').addClass('waves-effect waves-teal btn-flat button-delete').html('<i class="material-icons">close</i>');
+    movieCards(movie){
+        var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
+        var wrap = $('<div>').addClass('movie-title-wrap');
+        var title = $('<h5>').addClass('movie-title').text(movie);
+        var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
+        var plot = $('<div>').addClass('movie-plot').text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
         wrap.append(title, btnDelete);
-        $('#addedMovies').prepend(wrap);
+        movieWrap.append(wrap, plot);
+        $('#addedMovies').prepend(movieWrap);
     },
     compare(){
         event.preventDefault();
+        app.compare = true;
         //generate comparison page
     },
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
