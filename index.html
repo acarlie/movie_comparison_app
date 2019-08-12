@@ -4,41 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!-- Materialize -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Chart.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />            
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/style.css">
+
     <title>Movie Comparison App</title>
 </head>
 <body>
-    <main class="container">
-        <div class="row">
-            <div id="splash" class="col s12">
-                <h1 class="center-align">Logo Here</h1>
-                <form action="">
-                    <div class="input-field">
-                        <i class="material-icons prefix">add</i>
-                        <input id="addMovie" type="text" class="validate">
-                        <label for="addMovie">Add a Movie</label>
-                    </div>
-
-                    <div id="addedMovies">
-
-                    </div>
+    <!-- We'll hide this wrapper when the user compares -->
+    <div id="search-wrap" class="wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <h1 class="center-align">Movie Stats <!-- <span class="material-icons">local_movies</span> --> </h1>
+                    <form class="movie-form" action="">
+                        <div class="input-field">
+                            <i class="material-icons prefix">add</i>
+                            <input id="addMovie" type="text" class="validate">
+                            <label for="addMovie">Enter a Movie to Compare</label>
+                        </div>
     
-                    <button class="btn waves-effect waves-light" type="submit" name="action" id="compareMovies">Compare
-                        <!-- <i class="material-icons right">send</i> -->
-                    </button>
-                </form>
+                        <div id="addedMovies">
+    
+                        </div>
+        
+                        <button class="btn waves-effect waves-light button button-outline button-block" type="submit" name="action" id="compareMovies">Compare</button>
+                    </form>
+                
+                </div>
             
             </div>
-        
         </div>
-    </main>
+    </div>
+    <!-- We'll show this wrapper when the user compares -->
+    <div id="results-wrap" class="wrapper">
+        <div class="container">
+            <div class="row">
+                <div id="results" class="col s12">
+                    <!-- Results go here, append each chart in wrapper divs -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
     
     
 
