@@ -5,8 +5,35 @@ var app = {
         //We'll need to check OMDB to see if Movie exists and get the plot, if movie doesn't exist we'll need to tell the user it can't be found
         event.preventDefault();
         var movie = el.val();
+        var ratingName,
+            ratingValue,
+            moviePlot;
+
         this.moviesArray.push(movie);
-        app.movieCards(movie);
+
+        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function(response) {
+            if (response.Response === "True"){
+                ratingName = response.Ratings[0].Source;
+                ratingValue = response.Ratings[0].Value;
+                moviePlot = response.Plot;
+                app.movieCards(movie, moviePlot);
+
+                   
+            console.log(response);
+            console.log(ratingName);
+            console.log(ratingValue);
+            
+            } else {
+                //modal can't find movie
+            }
+     
+        });
+
         el.val('');
     },
     deleteAddedMovie(){
@@ -20,12 +47,12 @@ var app = {
             return ele != value;
         });
     },
-    movieCards(movie){
+    movieCards(movie, plot){
         var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
         var wrap = $('<div>').addClass('movie-title-wrap');
         var title = $('<h5>').addClass('movie-title').text(movie);
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
-        var plot = $('<div>').addClass('movie-plot').text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+        var plot = $('<div>').addClass('movie-plot').text(plot);
         wrap.append(title, btnDelete);
         movieWrap.append(wrap, plot);
         $('#addedMovies').prepend(movieWrap);
@@ -36,8 +63,7 @@ var app = {
         //generate comparison page
     },
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
-        
-
+    
         var movie = app.moviesArray
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
 
@@ -53,8 +79,6 @@ var app = {
             console.log(ratingValue);
             
         });
-    
-    
         
     }
 }

@@ -6,11 +6,16 @@
 
 /*css variables*/
 :root{
+    /* --color-primary: #ee0979;
+    --color-primary-darker: #de0979;
+    --color-secondary: #ff6a00; */
     --color-primary: #ee0979;
+    --color-primary-darker: #de0979;
+    --color-secondary: #ff6a00;
     --color-light: #fff;
-    --color-light-trans: rgba(255,255,255,.6);
+    --color-light-trans: rgba(255,255,255, .5);
     --color-dark: #333;
-    --color-dark-trans: rgba(0,0,0, .5);
+    --color-dark-trans: rgba(0,0,0, .3);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -23,6 +28,7 @@ h4, h5, h6 {
 
 .wrapper{
     min-height: 100vh;
+    padding-bottom: 3em;
 }
 
 .container{
@@ -42,9 +48,9 @@ h4, h5, h6 {
     background: -webkit-linear-gradient(-30deg, #2F80ED, #56CCF2); 
     background: linear-gradient(-30deg, #2F80ED, #56CCF2);  */
 
-    background: #ee0979; 
-    background: -webkit-linear-gradient(to right, #ff6a00, #ee0979); 
-    background: linear-gradient(to right, #ff6a00, #ee0979); 
+    background: var(--color-primary); 
+    background: -webkit-linear-gradient(to right, var(--color-secondary), var(--color-primary)); 
+    background: linear-gradient(to right, var(--color-secondary), var(--color-primary)); 
 
 }
 
@@ -57,9 +63,15 @@ h4, h5, h6 {
 }
 
 #results-wrap{
-    background: #ccc;
+    background: #ccc;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #fff, #ddd);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #fff, #ddd); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }
 
+.shadow{
+    text-shadow: 4px 4px var(--color-primary-darker);
+}
 
 /*-------------------Custom Buttons-------------------*/
 .button{
@@ -97,12 +109,12 @@ h4, h5, h6 {
     margin-bottom: 1.5em;
     color: var(--color-dark);
     background: var(--color-light);
-    box-shadow: 5px 5px var(--color-primary);
+    box-shadow: 5px 5px var(--color-primary-darker);
 }
 
 .movie-title-wrap{
     display: flex;
-    padding-bottom: .5em;
+    padding: .75em 0;
     margin-bottom: .5em;
     border-bottom: 1px solid var(--color-dark-trans);
 }
@@ -112,7 +124,17 @@ h4, h5, h6 {
     text-transform: capitalize;
 }
 
+.movie-title, .movie-wrap .button{
+    margin: 0;
+    padding: 0;
+}
+
 .movie-wrap .button{
+    transition: color .5s linear;
+    color: var(--color-dark-trans);
+}
+
+.movie-wrap .button:hover{
     color: var(--color-dark);
 }
 
@@ -160,6 +182,30 @@ h4, h5, h6 {
     color: var(--color-light);
 }
 
+/*-------------------Auto-fill Overrides-------------------*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--color-light);
+    -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+    -webkit-animation: autofill 0s forwards;
+    animation: autofill 0s forwards;
+}
+
+@keyframes autofill {
+    100% {
+        background: transparent;
+        color: inherit;
+    }
+}
+
+@-webkit-keyframes autofill {
+    100% {
+        background: transparent;
+        color: inherit;
+    }
+}
 
 /*---------------Media Queries---------------*/
 /*Desktop*/
