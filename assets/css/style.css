@@ -66,11 +66,14 @@ h4, h5, h6 {
     background: #ccc;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #fff, #ddd);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #fff, #ddd); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
 }
 
 .shadow{
     text-shadow: 4px 4px var(--color-primary-darker);
+}
+
+#search-wrap .helper-text{
+    color: var(--color-light);
 }
 
 /*-------------------Custom Buttons-------------------*/

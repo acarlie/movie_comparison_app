@@ -18,18 +18,21 @@ var app = {
             method: "GET"
         }).then(function(response) {
             if (response.Response === "True"){
+                $('#movieNotFound').text('');
                 ratingName = response.Ratings[0].Source;
                 ratingValue = response.Ratings[0].Value;
                 moviePlot = response.Plot;
                 app.movieCards(movie, moviePlot);
-
-                   
-            console.log("add Movie" + response);
-            console.log("add Movie" + ratingName);
-            console.log("add Movie" + ratingValue);
+ 
+            console.log(response);
+            console.log(ratingName);
+            console.log(ratingValue);
             
             } else {
-                
+                console.log('not found');
+                $('#movieNotFound').text('Movie Not Found :-(');
+                //modal can't find movie
+
             }
      
         });
@@ -102,6 +105,9 @@ var app = {
 
 
 $(document).ready(function(){
+
+  
+
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
     $('#compareMovies').on('click', app.compare);
