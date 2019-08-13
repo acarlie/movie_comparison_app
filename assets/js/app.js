@@ -37,7 +37,6 @@ var app = {
     },
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
         
-        for (var i = 0; i <2; i++) {
 
         var movie = app.moviesArray
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
@@ -48,14 +47,15 @@ var app = {
         }).then(function(response) {
             var ratingName = response.Ratings[0].Source;
             var ratingValue = response.Ratings[0].Value;
-            console.log(response)
+            var moviePlot = response.Plot;
+            console.log(response);
             console.log(ratingName);
             console.log(ratingValue);
             
         });
     
     
-        }
+        
     }
 }
 
@@ -71,27 +71,30 @@ $(document).ready(function(){
         if(key == 13){
             app.addMovie(el);
         } 
+
+        if(app.moviesArray.length === 2) {
+
+            for (var i = 0; i < 2 ; i++) {
+                var movie = app.moviesArray[i]
+                var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+            
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function(response) {
+                    var ratingName = response.Ratings[0].Source;
+                    var ratingValue = response.Ratings[0].Value;
+                    var valueNumber = ratingValue.slice(0,3);
+            
+                    console.log(response)
+                    console.log(ratingName);
+                    console.log(ratingValue);
+                    console.log(valueNumber)
+                    
+                });
+                }
+        }
     });
-
-    for (var i = 0; i < 2 ; i++) {
-    var movie = app.moviesArray[i]
-    var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-    }).then(function(response) {
-        var ratingName = response.Ratings[0].Source;
-        var ratingValue = response.Ratings[0].Value;
-        var valueNumber = ratingValue.slice(0,3);
-
-        console.log(response)
-        console.log(ratingName);
-        console.log(ratingValue);
-        console.log(valueNumber)
-        
-    });
-    }
     
 
 
