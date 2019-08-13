@@ -32,6 +32,7 @@ var app = {
                 console.log('not found');
                 $('#movieNotFound').text('Movie Not Found :-(');
                 //modal can't find movie
+
             }
      
         });
@@ -62,6 +63,25 @@ var app = {
     compare(){
         event.preventDefault();
         app.compare = true;
+        for (var i = 0; i < 2 ; i++) {
+            var movie = app.moviesArray[i]
+            var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+        
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function(response) {
+                var ratingName = response.Ratings[0].Source;
+                var ratingValue = response.Ratings[0].Value;
+                var valueNumber = ratingValue.slice(0,3);
+        
+                console.log(response)
+                console.log(ratingName);
+                console.log(ratingValue);
+                console.log(valueNumber)
+                
+            });     
+    }
         //generate comparison page
     },
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
@@ -76,9 +96,6 @@ var app = {
             var ratingName = response.Ratings[0].Source;
             var ratingValue = response.Ratings[0].Value;
             var moviePlot = response.Plot;
-            console.log(response);
-            console.log(ratingName);
-            console.log(ratingValue);
             
         });
         
@@ -94,6 +111,7 @@ $(document).ready(function(){
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
     $('#compareMovies').on('click', app.compare);
+
     $('#addMovie').keypress(function(e){
         var key = e.which;
         var el = $(this);
@@ -101,31 +119,8 @@ $(document).ready(function(){
             app.addMovie(el);
         } 
 
-        if(app.moviesArray.length === 2) {
-
-            for (var i = 0; i < 2 ; i++) {
-                var movie = app.moviesArray[i]
-                var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-            
-                $.ajax({
-                    url: queryURL,
-                    method: "GET"
-                }).then(function(response) {
-                    var ratingName = response.Ratings[0].Source;
-                    var ratingValue = response.Ratings[0].Value;
-                    var valueNumber = ratingValue.slice(0,3);
-            
-                    console.log(response)
-                    console.log(ratingName);
-                    console.log(ratingValue);
-                    console.log(valueNumber)
-                    
-                });
-                }
-        }
     });
     
-
 
 	$.ajax({
 			url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=Avengers%3A_Endgame&rvsection=0',
