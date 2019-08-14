@@ -10,8 +10,11 @@ var app = {
         var movie = el.val();
         var ratingName,
             ratingValue,
-
+            movieYear,
             moviePlot,
+            movieRated,
+            movieGenre,
+            directedBy,
             moviePoster;
 
         this.moviesArray.push(movie);
@@ -26,12 +29,16 @@ var app = {
                 $('#movieNotFound').text('');
                 ratingName = response.Ratings[0].Source;
                 ratingValue = response.Ratings[0].Value;
-
                 moviePlot = response.Plot;
                 moviePoster = response.Poster;
-                app.movieCards(movie, moviePlot, moviePoster);
+                movieYear = response.Year;
+                movieRated = response.Rated;
+                movieGenre = response.Genre;
+                directedBy = response.Director;
+                app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy);
                 app.wikiAPI(movie, ratingValue);
- 
+                
+                console.log(response)
             
             
 
@@ -95,15 +102,20 @@ var app = {
             return ele != value;
         });
     },
-    movieCards(movie, plot, poster){
+    movieCards(movie, plot, poster, year, rate, genre, director){
         var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
         var wrap = $('<div>').addClass('movie-title-wrap');
-        var title = $('<h5>').addClass('movie-title').text(movie);
+        var title = $('<h5>').addClass('movie-title').text(movie + " (" + year + ")");
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
         var poster = $("<img>").addClass("movie-poster").attr("src", poster);
         var plot = $('<div>').addClass('movie-plot').text(plot);
+        var ul = $("<ul style='list-style-type:none;'>");
+        var rated = $("<li>").text("Rating: " + rate);
+        var genre = $("<li>").text("Genre: " + genre);
+        var director =$("<li>").text("Directed By: " + director);
+        ul.append(rated, genre, director);
         wrap.append(title, btnDelete);
-        movieWrap.append(wrap,poster, plot);
+        movieWrap.append(wrap,poster, plot, ul);
         $('#addedMovies').prepend(movieWrap);
     },
     compare(movie){
