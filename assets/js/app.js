@@ -1,7 +1,10 @@
 var app = {
     compare: false,
     moviesArray:[],
+    moviesObjs: [],
+    idCounter: 0,
     addMovie(el){
+        this.idCounter++
         //We'll need to check OMDB to see if Movie exists and get the plot, if movie doesn't exist we'll need to tell the user it can't be found
         event.preventDefault();
         var movie = el.val();
@@ -9,6 +12,8 @@ var app = {
             ratingValue,
             moviePlot;
 
+        var movieObj = {id: this.idCounter, name: movie};
+            
         this.moviesArray.push(movie);
 
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
@@ -21,13 +26,15 @@ var app = {
                 $('#movieNotFound').text('');
                 ratingName = response.Ratings[0].Source;
                 ratingValue = response.Ratings[0].Value;
+
                 moviePlot = response.Plot;
                 app.movieCards(movie, moviePlot);
- 
-            console.log(response);
-            console.log(ratingName);
-            console.log(ratingValue);
-            
+
+                movieObj.rating = ratingValue;
+                app.moviesObjs.push(movieObj);
+                console.log(app.moviesObjs);
+                console.log(response);
+
             } else {
                 console.log('not found');
                 $('#movieNotFound').text('Movie Not Found :-(');
