@@ -39,6 +39,7 @@ var app = {
                 console.log('not found');
                 $('#movieNotFound').text('Movie Not Found :-(');
                 //modal can't find movie
+
             }
      
         });
@@ -69,6 +70,25 @@ var app = {
     compare(){
         event.preventDefault();
         app.compare = true;
+        for (var i = 0; i < 2 ; i++) {
+            var movie = app.moviesArray[i]
+            var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+        
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function(response) {
+                var ratingName = response.Ratings[0].Source;
+                var ratingValue = response.Ratings[0].Value;
+                var valueNumber = ratingValue.slice(0,3);
+        
+                console.log(response)
+                console.log(ratingName);
+                console.log(ratingValue);
+                console.log(valueNumber)
+                
+            });     
+    }
         //generate comparison page
     },
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
@@ -83,9 +103,6 @@ var app = {
             var ratingName = response.Ratings[0].Source;
             var ratingValue = response.Ratings[0].Value;
             var moviePlot = response.Plot;
-            console.log(response);
-            console.log(ratingName);
-            console.log(ratingValue);
             
         });
         
@@ -101,6 +118,7 @@ $(document).ready(function(){
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
     $('#compareMovies').on('click', app.compare);
+
     $('#addMovie').keypress(function(e){
         var key = e.which;
         var el = $(this);
@@ -108,31 +126,8 @@ $(document).ready(function(){
             app.addMovie(el);
         } 
 
-        if(app.moviesArray.length === 2) {
-
-            for (var i = 0; i < 2 ; i++) {
-                var movie = app.moviesArray[i]
-                var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-            
-                $.ajax({
-                    url: queryURL,
-                    method: "GET"
-                }).then(function(response) {
-                    var ratingName = response.Ratings[0].Source;
-                    var ratingValue = response.Ratings[0].Value;
-                    var valueNumber = ratingValue.slice(0,3);
-            
-                    console.log(response)
-                    console.log(ratingName);
-                    console.log(ratingValue);
-                    console.log(valueNumber)
-                    
-                });
-                }
-        }
     });
     
-
 
 	$.ajax({
 			url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=Avengers%3A_Endgame&rvsection=0',
@@ -141,50 +136,32 @@ $(document).ready(function(){
 	  }).then(function(response){
       var pages = response.query.pages;
       var id = Object.getOwnPropertyNames(pages);
+      var budget = getWiki("budget");
+      var gross = getWiki("gross");
+      console.log(budget);
+      console.log(gross);
       // retrieve budget string
-      var budgetStr1 = pages[id].revisions[0]['*'];
-      console.log(budgetStr1);
-      var budgetLocation = budgetStr1.indexOf('budget');
-      var budgetStr2 = budgetStr1.substring(budgetLocation, budgetStr1.length);
-      var budgetDollarLocation = budgetStr2.indexOf('$');
-      var budgetStr3 = budgetStr2.substring(budgetDollarLocation + 1, budgetStr2.length);
-     	var budgetCodeLocation = budgetStr3.indexOf('<');
-      var budgetTotal = budgetStr3.substring(0, budgetCodeLocation);
-      var budgetTotalInt=0;
-      
-      console.log(budgetTotal); //returns budget
-      
-      var grossStr1 = pages[id].revisions[0]['*'];
-      var grossLocation = grossStr1.indexOf('gross');
-      var grossStr2 = grossStr1.substring(grossLocation, grossStr1.length);
-      var grossDollarLocation = grossStr2.indexOf('$');
-      var grossStr3 = grossStr2.substring(grossDollarLocation + 1, grossStr2.length);
-      var grossCodeLocation = grossStr3.indexOf('<');
-      var grossTotal = grossStr3.substring(0, grossCodeLocation);
-      var grossTotalInt=0;
-
-      console.log(grossTotal);
-      if (budgetTotal.indexOf('million')>-1){
-          budgetTotalInt = parseFloat(budgetTotal) * 1000000;
-          console.log(budgetTotalInt);
+      function getWiki(string){
+      var str1 = pages[id].revisions[0]['*'];
+      var location = str1.indexOf(string);
+      var str2 = str1.substring(location, str1.length);
+      var dollarLocation = str2.indexOf('$');
+      var str3 = str2.substring(dollarLocation + 1, str2.length);
+     	var codeLocation = str3.indexOf('<');
+      var total = str3.substring(0, codeLocation);
+      var totalInt=0;
+      if (total.indexOf('million')>-1){
+          totalInt = parseFloat(total) * 1000000;
           
       }
-      else if (budgetTotal.indexOf("billion")>-1){
-          budgetTotalInt = parseFloat(budgetTotal) * 1000000000;
-          console.log(budgetTotalInt);
+      else if (total.indexOf("billion")>-1){
+          totalInt = parseFloat(total) * 1000000000;
       }
-      if (grossTotal.indexOf('million')>-1){
-            grossTotalInt = parseFloat(grossTotal) * 1000000;
-            console.log(grossTotalInt);
-            
-        }
-        else if (grossTotal.indexOf("billion")>-1){
-            grossTotalInt = parseFloat(grossTotal) * 1000000000;
-            console.log(grossTotalInt);
-        }
-      
-	  });
+     
+      return totalInt;
+	  };
 
+});
 });
 
 
