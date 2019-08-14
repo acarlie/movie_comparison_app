@@ -10,8 +10,10 @@ var app = {
         var movie = el.val();
         var ratingName,
             ratingValue,
-            moviePlot;
-            
+
+            moviePlot,
+            moviePoster;
+
         this.moviesArray.push(movie);
 
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
@@ -26,9 +28,12 @@ var app = {
                 ratingValue = response.Ratings[0].Value;
 
                 moviePlot = response.Plot;
-                app.movieCards(movie, moviePlot);
-                
+                moviePoster = response.Poster;
+                app.movieCards(movie, moviePlot, moviePoster);
                 app.wikiAPI(movie, ratingValue);
+ 
+            
+            
 
             } else {
                 console.log('not found');
@@ -90,19 +95,26 @@ var app = {
             return ele != value;
         });
     },
-    movieCards(movie, plot){
+    movieCards(movie, plot, poster){
         var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
         var wrap = $('<div>').addClass('movie-title-wrap');
         var title = $('<h5>').addClass('movie-title').text(movie);
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
+        var poster = $("<img>").addClass("movie-poster").attr("src", poster);
         var plot = $('<div>').addClass('movie-plot').text(plot);
         wrap.append(title, btnDelete);
-        movieWrap.append(wrap, plot);
+        movieWrap.append(wrap,poster, plot);
         $('#addedMovies').prepend(movieWrap);
     },
-    compare(){
+    compare(movie){
         event.preventDefault();
         app.compare = true;
+        app.getOMDB(movie);
+        
+        //generate comparison page
+    },
+    getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
+    
         for (var i = 0; i < 2 ; i++) {
             var movie = app.moviesArray[i]
             var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
@@ -122,22 +134,6 @@ var app = {
                 
             });     
     }
-        //generate comparison page
-    },
-    getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
-    
-        var movie = app.moviesArray
-        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(function(response) {
-            var ratingName = response.Ratings[0].Source;
-            var ratingValue = response.Ratings[0].Value;
-            var moviePlot = response.Plot;
-            
-        });
         
     }
 }

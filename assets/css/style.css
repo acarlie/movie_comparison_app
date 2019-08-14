@@ -113,6 +113,7 @@ h4, h5, h6 {
     color: var(--color-dark);
     background: var(--color-light);
     box-shadow: 5px 5px var(--color-primary-darker);
+    overflow: auto;
 }
 
 .movie-title-wrap{
@@ -143,6 +144,14 @@ h4, h5, h6 {
 
 .movie-wrap .button:focus{
     background: none;
+}
+
+.movie-poster {
+    width: 100px;
+    height: 150px;
+    float: left;
+    margin: 10px 10px 0 0 ;
+    
 }
 
 
