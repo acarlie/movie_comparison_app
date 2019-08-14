@@ -1,12 +1,16 @@
 var app = {
     compare: false,
     moviesArray:[],
+    moviesObjs: [],
+    idCounter: 0,
     addMovie(el){
+        this.idCounter++
         //We'll need to check OMDB to see if Movie exists and get the plot, if movie doesn't exist we'll need to tell the user it can't be found
         event.preventDefault();
         var movie = el.val();
         var ratingName,
             ratingValue,
+
             moviePlot,
             moviePoster;
 
@@ -22,25 +26,63 @@ var app = {
                 $('#movieNotFound').text('');
                 ratingName = response.Ratings[0].Source;
                 ratingValue = response.Ratings[0].Value;
+
                 moviePlot = response.Plot;
                 moviePoster = response.Poster;
                 app.movieCards(movie, moviePlot, moviePoster);
-                
+                app.wikiAPI(movie, ratingValue);
  
-            console.log(response);
-            console.log(ratingName);
-            console.log(ratingValue);
             
+            
+
             } else {
                 console.log('not found');
                 $('#movieNotFound').text('Movie Not Found :-(');
                 //modal can't find movie
-
             }
      
         });
 
         el.val('');
+    },
+    wikiAPI(movie, rating){
+        var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
+
+        $.ajax({
+                url: queryUrl,
+                method: 'GET'
+            }).then(function(response){
+                var pages = response.query.pages;
+                var id = Object.getOwnPropertyNames(pages);
+                var budget = app.getWiki(pages, id, "budget");
+                var gross = app.getWiki(pages, id, "gross");
+
+                var movieObj = {id: app.idCounter, name: movie, rating: rating, budget: budget, gross: gross};
+                app.moviesObjs.push(movieObj);
+
+                console.log(app.moviesObjs);
+            // retrieve budget string
+            });
+
+    },
+    getWiki(pages, id, string){
+        console.log(pages);
+        console.log(id);
+        var str1 = pages[id].revisions[0]['*'];
+        var location = str1.indexOf(string);
+        var str2 = str1.substring(location, str1.length);
+        var dollarLocation = str2.indexOf('$');
+        var str3 = str2.substring(dollarLocation + 1, str2.length);
+        var codeLocation = str3.indexOf('<');
+        var total = str3.substring(0, codeLocation);
+        var totalInt;
+        if (total.indexOf('million')>-1){
+            totalInt = parseFloat(total) * 1000000; 
+        } else if (total.indexOf("billion")>-1){
+            totalInt = parseFloat(total) * 1000000000;
+        }
+        console.log(totalInt)
+        return totalInt;
     },
     deleteAddedMovie(){
         event.preventDefault();
@@ -101,7 +143,6 @@ var app = {
 $(document).ready(function(){
 
   
-
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
     $('#compareMovies').on('click', app.compare);
@@ -116,39 +157,6 @@ $(document).ready(function(){
     });
     
 
-	$.ajax({
-			url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=Avengers%3A_Endgame&rvsection=0',
-/*        url: 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=The%20Lion%20King&rvsection=0', */
-	    method: 'GET'
-	  }).then(function(response){
-      var pages = response.query.pages;
-      var id = Object.getOwnPropertyNames(pages);
-      var budget = getWiki("budget");
-      var gross = getWiki("gross");
-      console.log(budget);
-      console.log(gross);
-      // retrieve budget string
-      function getWiki(string){
-      var str1 = pages[id].revisions[0]['*'];
-      var location = str1.indexOf(string);
-      var str2 = str1.substring(location, str1.length);
-      var dollarLocation = str2.indexOf('$');
-      var str3 = str2.substring(dollarLocation + 1, str2.length);
-     	var codeLocation = str3.indexOf('<');
-      var total = str3.substring(0, codeLocation);
-      var totalInt=0;
-      if (total.indexOf('million')>-1){
-          totalInt = parseFloat(total) * 1000000;
-          
-      }
-      else if (total.indexOf("billion")>-1){
-          totalInt = parseFloat(total) * 1000000000;
-      }
-     
-      return totalInt;
-	  };
-
-});
 });
 
 
