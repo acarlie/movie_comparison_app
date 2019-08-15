@@ -5,18 +5,18 @@ var app = {
     idCounter: 0,
 
     addMovie(el){
+
         this.idCounter++
-        //We'll need to check OMDB to see if Movie exists and get the plot, if movie doesn't exist we'll need to tell the user it can't be found
         event.preventDefault();
         var movie = el.val();
         this.moviesArray.push(movie);
-
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
 
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function(response) {
+
             if (response.Response === "True"){
                 $('#movieNotFound').text('');
                 var ratingName = response.Ratings[0].Source,
@@ -32,9 +32,8 @@ var app = {
                 app.wikiAPI(movie, rating);
             } else {
                 $('#movieNotFound').text('Movie Not Found :-(');
-                //modal can't find movie
             }
-     
+
         });
 
         el.val('');
@@ -43,20 +42,19 @@ var app = {
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
 
         $.ajax({
-                url: queryUrl,
-                method: 'GET'
-            }).then(function(response){
-                var pages = response.query.pages;
-                var id = Object.getOwnPropertyNames(pages);
-                var budget = app.getWiki(pages, id, "budget");
-                var gross = app.getWiki(pages, id, "gross");
+            url: queryUrl,
+            method: 'GET'
+        }).then(function (response) {
+            var pages = response.query.pages;
+            var id = Object.getOwnPropertyNames(pages);
+            var budget = app.getWiki(pages, id, "budget");
+            var gross = app.getWiki(pages, id, "gross");
 
-                var movieObj = {id: app.idCounter, name: movie, rating: rating, budget: budget, gross: gross};
-                app.moviesObjs.push(movieObj);
+            var movieObj = { id: app.idCounter, name: movie, rating: rating, budget: budget, gross: gross };
+            app.moviesObjs.push(movieObj);
 
-                console.log(app.moviesObjs);
-            // retrieve budget string
-            });
+            console.log(app.moviesObjs);
+        });
 
     },
     getWiki(pages, id, string){
