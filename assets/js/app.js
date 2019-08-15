@@ -67,7 +67,7 @@ var app = {
 
             var movieObj = { id: app.idCounter, name: movie, rating: rating, budget: budget, gross: boxOff };
             app.moviesObjs.push(movieObj);
-
+            
             console.log(app.moviesObjs);
         });
 
@@ -95,16 +95,14 @@ var app = {
     deleteAddedMovie(){
         event.preventDefault();
         $(this).parent().parent().remove();
-        var dataId = $(this).parent().parent().attr('data-id');
-        app.moviesArray = app.arrayRemove(app.moviesArray, dataId);
-    },
-    arrayRemove(arr, value) {
-        return arr.filter(function(ele){
-            return ele != value;
+        var dataNum = $(this).parent().parent().attr('data-num');
+        var num = parseInt(dataNum);
+        app.moviesObjs = app.moviesObjs.filter(function( obj ) {
+            return obj.id !== num;
         });
     },
     movieCards(movie, plot, poster, year, rate, genre, director){
-        var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie);
+        var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie).attr('data-num', app.idCounter);
         var wrap = $('<div>').addClass('movie-title-wrap');
         var title = $('<h5>').addClass('movie-title').text(movie + " (" + year + ")");
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
