@@ -19,6 +19,7 @@ var app = {
 
             if (response.Response === "True"){
                 $('#movieNotFound').text('');
+                console.log(response);
                 var ratingName = response.Ratings[0].Source,
                     ratingValue = response.Ratings[0].Value,
                     rating = parseFloat(ratingValue),
@@ -27,9 +28,11 @@ var app = {
                     movieYear = response.Year,
                     movieRated = response.Rated,
                     movieGenre = response.Genre,
-                    directedBy = response.Director;
+                    directedBy = response.Director,
+                    boxOffice = response.BoxOffice,
+                    movieTitle = response.Title;
                 app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy);
-                app.wikiAPI(movie, rating);
+                app.wikiAPI(movieTitle, rating, boxOffice);
             } else {
                 $('#movieNotFound').text('Movie Not Found :-(');
             }
@@ -38,7 +41,7 @@ var app = {
 
         el.val('');
     },
-    wikiAPI(movie, rating){
+    wikiAPI(movie, rating, boxOffice){
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
 
         $.ajax({
@@ -50,7 +53,19 @@ var app = {
             var budget = app.getWiki(pages, id, "budget");
             var gross = app.getWiki(pages, id, "gross");
 
-            var movieObj = { id: app.idCounter, name: movie, rating: rating, budget: budget, gross: gross };
+            var boxOff;
+            if (boxOffice === undefined){
+                boxOff = gross;
+            } else {
+                boxOff = boxOffice;
+            }
+            
+            console.log(movie + ' Budget: ' + budget);
+            console.log(movie + ' Gross: ' + gross);
+            var boxOffice = app.getWiki(pages, id, "box office");
+            console.log(movie + ' Box Office: ' + boxOffice);
+
+            var movieObj = { id: app.idCounter, name: movie, rating: rating, budget: budget, gross: boxOff };
             app.moviesObjs.push(movieObj);
 
             console.log(app.moviesObjs);
@@ -58,9 +73,10 @@ var app = {
 
     },
     getWiki(pages, id, string){
-        console.log(pages);
-        console.log(id);
-        var str1 = pages[id].revisions[0]['*'];
+        // console.log(pages);
+        // console.log(id);
+        var str1 = pages[id].revisions[0]['*'].toLowerCase();
+        console.log(str1);
         var location = str1.indexOf(string);
         var str2 = str1.substring(location, str1.length);
         var dollarLocation = str2.indexOf('$');
@@ -106,9 +122,15 @@ var app = {
     compare(movie){
         event.preventDefault();
         app.compare = true;
-        app.getOMDB(movie);
-        app.generateChart($("#results1"), 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
-        app.generateChart($("#results2"), 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+        
+        if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
+            app.generateChart($("#results1"), 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
+        } 
+
+        if (app.moviesObjs[0].budget !== undefined && app.moviesObjs[1].budget !== undefined){
+            app.generateChart($("#results2"), 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+        }
+
         app.generateChart($("#results3"), 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
         app.generateHeader();
     },
