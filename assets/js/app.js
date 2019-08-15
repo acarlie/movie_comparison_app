@@ -3,20 +3,12 @@ var app = {
     moviesArray:[],
     moviesObjs: [],
     idCounter: 0,
+
     addMovie(el){
         this.idCounter++
         //We'll need to check OMDB to see if Movie exists and get the plot, if movie doesn't exist we'll need to tell the user it can't be found
         event.preventDefault();
         var movie = el.val();
-        var ratingName,
-            ratingValue,
-            movieYear,
-            moviePlot,
-            movieRated,
-            movieGenre,
-            directedBy,
-            moviePoster;
-
         this.moviesArray.push(movie);
 
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
@@ -27,23 +19,18 @@ var app = {
         }).then(function(response) {
             if (response.Response === "True"){
                 $('#movieNotFound').text('');
-                ratingName = response.Ratings[0].Source;
-                ratingValue = response.Ratings[0].Value;
-                moviePlot = response.Plot;
-                moviePoster = response.Poster;
-                movieYear = response.Year;
-                movieRated = response.Rated;
-                movieGenre = response.Genre;
-                directedBy = response.Director;
+                var ratingName = response.Ratings[0].Source,
+                    ratingValue = response.Ratings[0].Value,
+                    rating = parseFloat(ratingValue),
+                    moviePlot = response.Plot,
+                    moviePoster = response.Poster,
+                    movieYear = response.Year,
+                    movieRated = response.Rated,
+                    movieGenre = response.Genre,
+                    directedBy = response.Director;
                 app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy);
-                app.wikiAPI(movie, ratingValue);
-                
-                console.log(response)
-            
-            
-
+                app.wikiAPI(movie, rating);
             } else {
-                console.log('not found');
                 $('#movieNotFound').text('Movie Not Found :-(');
                 //modal can't find movie
             }
@@ -122,9 +109,14 @@ var app = {
         event.preventDefault();
         app.compare = true;
         app.getOMDB(movie);
+        app.generateChart($("#results1"), 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
+        app.generateChart($("#results2"), 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+        app.generateChart($("#results3"), 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
+        app.generateHeader();
+    },
         
         //generate comparison page
-    },
+
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
     
         for (var i = 0; i < 2 ; i++) {
@@ -147,12 +139,55 @@ var app = {
             });     
     }
         
-    }
+    },
+    generateChart(param1, param2, param3, param4) {
+        // var ratingA = parseInt(app.moviesObjs[0].rating);
+        // var ratingB = parseInt(app.moviesObjs[1].rating);
+        var ctx = $(param1);
+        var myChart1 = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [app.moviesObjs[0].name, app.moviesObjs[1].name],
+            datasets: [{
+                label: param2,
+                data: [param3, param4],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                ],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        },
+        aspectRatio: 1,
+        duration: 3000
+
+    });
+    },
+    generateHeader() {
+        $("#movie-title1").text(app.moviesObjs[0].name);
+        $("#movie-title2").text(app.moviesObjs[1].name);
+        $("#vs").show();
+    },
 }
 
 
 
 $(document).ready(function(){
+
+    $("#vs").hide();
 
   
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
