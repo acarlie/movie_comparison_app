@@ -3,6 +3,7 @@ var app = {
     moviesArray:[],
     moviesObjs: [],
     idCounter: 0,
+
     addMovie(el){
 
         this.idCounter++
@@ -106,7 +107,14 @@ var app = {
         event.preventDefault();
         app.compare = true;
         app.getOMDB(movie);
+        app.generateChart($("#results1"), 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
+        app.generateChart($("#results2"), 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+        app.generateChart($("#results3"), 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
+        app.generateHeader();
     },
+        
+        //generate comparison page
+
     getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
     
         for (var i = 0; i < 2 ; i++) {
@@ -129,12 +137,55 @@ var app = {
             });     
     }
         
-    }
+    },
+    generateChart(param1, param2, param3, param4) {
+        // var ratingA = parseInt(app.moviesObjs[0].rating);
+        // var ratingB = parseInt(app.moviesObjs[1].rating);
+        var ctx = $(param1);
+        var myChart1 = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [app.moviesObjs[0].name, app.moviesObjs[1].name],
+            datasets: [{
+                label: param2,
+                data: [param3, param4],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                ],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        },
+        aspectRatio: 1,
+        duration: 3000
+
+    });
+    },
+    generateHeader() {
+        $("#movie-title1").text(app.moviesObjs[0].name);
+        $("#movie-title2").text(app.moviesObjs[1].name);
+        $("#vs").show();
+    },
 }
 
 
 
 $(document).ready(function(){
+
+    $("#vs").hide();
 
   
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
