@@ -5,41 +5,51 @@ var app = {
     idCounter: 0,
 
     addMovie(el){
-
-        this.idCounter++
+       
         event.preventDefault();
         var movie = el.val();
+        this.idCounter++ 
         this.moviesArray.push(movie);
-        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy"; 
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function(response) {
+    
+                if (response.Response === "True" && app.moviesObjs.length < 2){
+                    $('#movieNotFound').text('');
+                    console.log(response);
+                    var ratingName = response.Ratings[0].Source,
+                        ratingValue = response.Ratings[0].Value,
+                        rating = parseFloat(ratingValue),
+                        moviePlot = response.Plot,
+                        moviePoster = response.Poster,
+                        movieYear = response.Year,
+                        movieRated = response.Rated,
+                        movieGenre = response.Genre,
+                        directedBy = response.Director,
+                        boxOffice = response.BoxOffice,
+                        movieTitle = response.Title;
+                    app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy);
+                    app.wikiAPI(movieTitle, rating, boxOffice);
 
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(function(response) {
+                } if (response.Response === "True" && app.moviesObjs.length === 1){
+                    $("input").prop("disabled", true);
+                    $("#comment").text("Click compare button to compare your movies now!")
+                    function blinker(){
+                    $("#compareMovies").fadeOut(300);
+                    $("#compareMovies").fadeIn(300);
+                    }
+                    setInterval(blinker,1000);
+                } else {
+                    $('#movieNotFound').text('Movie Not Found :-(');
+                }
 
-            if (response.Response === "True"){
-                $('#movieNotFound').text('');
-                console.log(response);
-                var ratingName = response.Ratings[0].Source,
-                    ratingValue = response.Ratings[0].Value,
-                    rating = parseFloat(ratingValue),
-                    moviePlot = response.Plot,
-                    moviePoster = response.Poster,
-                    movieYear = response.Year,
-                    movieRated = response.Rated,
-                    movieGenre = response.Genre,
-                    directedBy = response.Director,
-                    boxOffice = response.BoxOffice,
-                    movieTitle = response.Title;
-                app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy);
-                app.wikiAPI(movieTitle, rating, boxOffice);
-            } else {
-                $('#movieNotFound').text('Movie Not Found :-(');
-            }
-
-        });
+                console.log("moviesObjs: " + app.moviesObjs.length);
+            });
 
         el.val('');
+
     },
     wikiAPI(movie, rating, boxOffice){
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
