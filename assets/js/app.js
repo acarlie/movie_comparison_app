@@ -1,58 +1,19 @@
 var app = {
     compare: false,
-    moviesArray:[],
+    // moviesArray:[],
     moviesObjs: [],
     idCounter: 0,
     recentSearch: [],
+    blinkerInterval: '',
     addMovie(el){
-
-       
         event.preventDefault();
+
         var movie = el.val();
+
         this.idCounter++ 
-        app.chipGen(el);
-        console.log(app.recentSearch);
-        this.moviesArray.push(movie);
-        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy"; 
-            $.ajax({
-                url: queryURL,
-                method: "GET"
-            }).then(function(response) {
-    
-                if (response.Response === "True" && app.moviesObjs.length < 2){
-                    $('#movieNotFound').text('');
-                    console.log(response);
-                    var ratingName = response.Ratings[0].Source,
-                        ratingValue = response.Ratings[0].Value,
-                        rating = parseFloat(ratingValue),
-                        moviePlot = response.Plot,
-                        moviePoster = response.Poster,
-                        movieYear = response.Year,
-                        movieRated = response.Rated,
-                        movieGenre = response.Genre,
-                        directedBy = response.Director,
-                        boxOffice = response.BoxOffice,
-                        movieTitle = response.Title;
-                    app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy, this.idCounter);
-                    app.wikiAPI(movieTitle, rating, boxOffice);
-                    app.getWikiUrl(movieTitle, this.idCounter);
-
-                } if (response.Response === "True" && app.moviesObjs.length === 1){
-                    $("input").prop("disabled", true);
-                    $("#comment").text("Click compare button to compare your movies now!")
-                    function blinker(){
-                    $("#compareMovies").fadeOut(300);
-                    $("#compareMovies").fadeIn(300);
-                    }
-                    setInterval(blinker,1000);
-                } else {
-                    $('#movieNotFound').text('Movie Not Found :-(');
-                }
-
-                console.log("moviesObjs: " + app.moviesObjs.length);
-            });
-
-
+        this.chipGen(el);
+        this.getOMDB(movie);
+        // this.moviesArray.push(movie);
 
         el.val('');
 
@@ -104,10 +65,10 @@ var app = {
                 boxOff = boxOffice;
             }
             
-            console.log(movie + ' Budget: ' + budget);
-            console.log(movie + ' Gross: ' + gross);
             var boxOffice = app.getWiki(pages, id, "box office");
-            console.log(movie + ' Box Office: ' + boxOffice);
+            // console.log(movie + ' Box Office: ' + boxOffice);
+            // console.log(movie + ' Budget: ' + budget);
+            // console.log(movie + ' Gross: ' + gross);
 
             var movieObj = { id: app.idCounter, name: movie, rating: rating, budget: budget, gross: boxOff };
             app.moviesObjs.push(movieObj);
@@ -168,7 +129,7 @@ var app = {
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
         var poster = $("<img>").addClass("movie-poster").attr("src", poster);
         var plot = $('<div>').addClass('movie-plot').text(plot);
-        var ul = $("<ul style='list-style-type:none;'>").attr('id', 'ul' + id);
+        var ul = $("<ul>").addClass('movie-info').attr('id', 'ul' + id);
         var rated = $("<li>").text("Rating: " + rate);
         var genre = $("<li>").text("Genre: " + genre);
         var director =$("<li>").text("Directed By: " + director);
@@ -179,8 +140,7 @@ var app = {
     },
     compare(movie){
         event.preventDefault();
-        app.compare = true;
-
+        clearInterval(app.blinkerInterval);
         console.log(app.moviesObjs);
         
         if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
@@ -194,33 +154,63 @@ var app = {
         app.generateChart("results3", 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
         app.generateHeader();
 
-        $("#clear-button").show();
+        $("#search-wrap").hide();
+        $("#results-wrap").show();
         
     },
-        
-        //generate comparison page
+    getOMDB(movie){ 
 
-    getOMDB(movie){ //so we can reuse this function using app.getOMDB(movie);
-    
-        for (var i = 0; i < 2 ; i++) {
-            var movie = app.moviesArray[i]
-            var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy"; 
+
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function(response) {
+
+            if (response.Response === "True" && app.moviesObjs.length < 2){
+                $('#movieNotFound').text('');
+                console.log(response);
+                var ratingName = response.Ratings[0].Source,
+                    ratingValue = response.Ratings[0].Value,
+                    rating = parseFloat(ratingValue);
+                app.movieCards(movie, response.Plot, response.Poster, response.Year, response.Rated, response.Genre, response.Director, this.idCounter);
+                app.wikiAPI(response.Title, rating, response.BoxOffice);
+                app.getWikiUrl(response.Title, this.idCounter);
+
+            } else if (response.Response === "True" && app.moviesObjs.length > 0){
+                $("input").prop("disabled", true);
+                $("#comment").text("Click compare button to compare your movies now!")
+                function blinker(){
+                    $("#compareMovies").fadeOut(300);
+                    $("#compareMovies").fadeIn(300);
+                }
+                app.blinkerInterval = setInterval(blinker, 1000);
+            } else {
+                $('#movieNotFound').text('Movie Not Found :-(');
+            }
+
+            console.log("moviesObjs: " + app.moviesObjs.length);
+        });
+
+    //     for (var i = 0; i < 2 ; i++) {
+    //         var movie = app.moviesArray[i]
+    //         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
         
-            $.ajax({
-                url: queryURL,
-                method: "GET"
-            }).then(function(response) {
-                var ratingName = response.Ratings[0].Source;
-                var ratingValue = response.Ratings[0].Value;
-                var valueNumber = ratingValue.slice(0,3);
+    //         $.ajax({
+    //             url: queryURL,
+    //             method: "GET"
+    //         }).then(function(response) {
+    //             var ratingName = response.Ratings[0].Source;
+    //             var ratingValue = response.Ratings[0].Value;
+    //             var valueNumber = ratingValue.slice(0,3);
         
-                console.log(response)
-                console.log(ratingName);
-                console.log(ratingValue);
-                console.log(valueNumber)
+    //             console.log(response)
+    //             console.log(ratingName);
+    //             console.log(ratingValue);
+    //             console.log(valueNumber)
                 
-            });     
-    }
+    //         });     
+    // }
         
     },
     generateChart(param1, param2, param3, param4) {
@@ -267,15 +257,15 @@ var app = {
     generateHeader() {
         $("#movie-title1").text(app.moviesObjs[0].name);
         $("#movie-title2").text(app.moviesObjs[1].name);
-        $("#vs").show();
+        
     },
 }
 
 $(document).ready(function(){
     console.log(localStorage);
-    $("#vs").hide();
 
-    $("#clear-button").hide();
+
+    $("#results-wrap").hide();
 
     app.getRecent();
   
@@ -295,13 +285,15 @@ $(document).ready(function(){
     $("#clear-button").on("click", function() {
         $("#addedMovies").empty();
         $("#movie-title1").empty();
-        $("#vs").hide();
         $("#movie-title2").empty();
         $("#chart-container").empty();
         app.moviesObjs = [];
         console.log(app.moviesObjs);
         console.log("click");
-        $("#clear-button").hide();
+        $('#results-wrap').hide();
+        $('#search-wrap').show();
+        $("input").prop("disabled", false);
+        $("#comment").text("");
     });
 
 });
