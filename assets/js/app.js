@@ -118,6 +118,11 @@ var app = {
         $(this).parent().parent().remove();
         var dataNum = $(this).parent().parent().attr('data-num');
         var num = parseInt(dataNum);
+        if (app.moviesObjs.length === 2){
+            $("input").prop("disabled", false);
+            $("#comment").text("");
+            clearInterval(app.blinkerInterval);
+        }
         app.moviesObjs = app.moviesObjs.filter(function( obj ) {
             return obj.id !== num;
         });
