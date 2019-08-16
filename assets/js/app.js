@@ -3,20 +3,20 @@ var app = {
     moviesArray:[],
     moviesObjs: [],
     idCounter: 0,
+    recentSearch: [],
     addMovie(el){
+        this.idCounter++;
         event.preventDefault();
-
-        this.idCounter++
         var movie = el.val();
+        app.chipGen(el);
+        console.log(app.recentSearch);
         this.moviesArray.push(movie);
-        
-
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function(response) {
-
+            
             if (response.Response === "True"){
                 $('#movieNotFound').text('');
                 console.log(response);
@@ -38,10 +38,38 @@ var app = {
             } else {
                 $('#movieNotFound').text('Movie Not Found :-(');
             }
-
+            
         });
-
+        
         el.val('');
+    },
+    getRecent(){
+        $('#recentSearch').empty();
+        var existing = JSON.parse(localStorage.getItem('search'));
+        console.log(existing);
+        if(!Array.isArray(existing)){
+            app.recentSearch = []; 
+        } else{
+            app.recentSearch = existing;
+        }
+
+        for(var j = 0; j<app.recentSearch.length; j++){
+            var searchButtons = $("<div>").addClass("chip").attr("data-subject", app.recentSearch[j]);
+            searchButtons.text(app.recentSearch[j]);
+            $("#recentSearch").append(searchButtons);
+        }
+    },
+    chipGen(el){
+        var movie= el.val();
+        app.recentSearch.push(movie);
+        console.log(app.recentSearch);
+                
+                    // Save back to localStorage
+        localStorage.setItem("search", JSON.stringify(app.recentSearch));
+                    // Get the existing data
+        app.getRecent();   
+                    // $(existing).push(JSON.stringify(movie));
+                    // localStorage.setItem('search', existing.toString());
     },
     wikiAPI(movie, rating, boxOffice){
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
@@ -222,9 +250,9 @@ var app = {
 
 
 $(document).ready(function(){
-
+    console.log(localStorage);
     $("#vs").hide();
-
+    app.getRecent();
   
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
