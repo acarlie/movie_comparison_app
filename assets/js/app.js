@@ -3,20 +3,20 @@ var app = {
     moviesArray:[],
     moviesObjs: [],
     idCounter: 0,
-
+    recentSearch: [],
     addMovie(el){
-
-        this.idCounter++
+        this.idCounter++;
         event.preventDefault();
         var movie = el.val();
+        app.chipGen(el);
+        console.log(app.recentSearch);
         this.moviesArray.push(movie);
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function(response) {
-
+            
             if (response.Response === "True"){
                 $('#movieNotFound').text('');
                 console.log(response);
@@ -31,15 +31,45 @@ var app = {
                     directedBy = response.Director,
                     boxOffice = response.BoxOffice,
                     movieTitle = response.Title;
-                app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy);
+                app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy, this.idCounter);
                 app.wikiAPI(movieTitle, rating, boxOffice);
+                app.getWikiUrl(movieTitle, this.idCounter);
+
             } else {
                 $('#movieNotFound').text('Movie Not Found :-(');
             }
-
+            
         });
-
+        
         el.val('');
+    },
+    getRecent(){
+        $('#recentSearch').empty();
+        var existing = JSON.parse(localStorage.getItem('search'));
+        console.log(existing);
+        if(!Array.isArray(existing)){
+            app.recentSearch = []; 
+        } else{
+            app.recentSearch = existing;
+        }
+
+        for(var j = 0; j<app.recentSearch.length; j++){
+            var searchButtons = $("<div>").addClass("chip").attr("data-subject", app.recentSearch[j]);
+            searchButtons.text(app.recentSearch[j]);
+            $("#recentSearch").append(searchButtons);
+        }
+    },
+    chipGen(el){
+        var movie= el.val();
+        app.recentSearch.push(movie);
+        console.log(app.recentSearch);
+                
+                    // Save back to localStorage
+        localStorage.setItem("search", JSON.stringify(app.recentSearch));
+                    // Get the existing data
+        app.getRecent();   
+                    // $(existing).push(JSON.stringify(movie));
+                    // localStorage.setItem('search', existing.toString());
     },
     wikiAPI(movie, rating, boxOffice){
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
@@ -75,6 +105,7 @@ var app = {
     getWiki(pages, id, string){
         // console.log(pages);
         // console.log(id);
+        console.log(pages[id]);
         var str1 = pages[id].revisions[0]['*'].toLowerCase();
         console.log(str1);
         var location = str1.indexOf(string);
@@ -92,6 +123,21 @@ var app = {
         console.log(totalInt)
         return totalInt;
     },
+    getWikiUrl(movie, id){
+        var queryUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + movie + '&limit=1&format=json&origin=*&callback=';
+        $.ajax({
+            url: queryUrl,
+            method: 'GET'
+        }).then(function(response){
+            var http = response.indexOf('http');
+            var str = response.substring(http, response.length);
+            var end = str.indexOf('"]');
+            var link = str.substring(0, end);
+            console.log(link);
+            var link = $('<li>').html('See on WikiPedia: <a href="' + link + '" target="_blank">' + link + '</a>');
+            $('#ul' + id).append(link);
+        })
+    },
     deleteAddedMovie(){
         event.preventDefault();
         $(this).parent().parent().remove();
@@ -101,14 +147,14 @@ var app = {
             return obj.id !== num;
         });
     },
-    movieCards(movie, plot, poster, year, rate, genre, director){
+    movieCards(movie, plot, poster, year, rate, genre, director, id){
         var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie).attr('data-num', app.idCounter);
         var wrap = $('<div>').addClass('movie-title-wrap');
         var title = $('<h5>').addClass('movie-title').text(movie + " (" + year + ")");
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
         var poster = $("<img>").addClass("movie-poster").attr("src", poster);
         var plot = $('<div>').addClass('movie-plot').text(plot);
-        var ul = $("<ul style='list-style-type:none;'>");
+        var ul = $("<ul style='list-style-type:none;'>").attr('id', 'ul' + id);
         var rated = $("<li>").text("Rating: " + rate);
         var genre = $("<li>").text("Genre: " + genre);
         var director =$("<li>").text("Directed By: " + director);
@@ -212,11 +258,13 @@ var app = {
 }
 
 $(document).ready(function(){
-
+    console.log(localStorage);
     $("#vs").hide();
 
     $("#clear-button").hide();
 
+    app.getRecent();
+  
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
     $('#compareMovies').on('click', app.compare);
