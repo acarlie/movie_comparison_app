@@ -5,43 +5,57 @@ var app = {
     idCounter: 0,
     recentSearch: [],
     addMovie(el){
-        this.idCounter++;
+
+       
         event.preventDefault();
         var movie = el.val();
+        this.idCounter++ 
         app.chipGen(el);
         console.log(app.recentSearch);
         this.moviesArray.push(movie);
-        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(function(response) {
-            
-            if (response.Response === "True"){
-                $('#movieNotFound').text('');
-                console.log(response);
-                var ratingName = response.Ratings[0].Source,
-                    ratingValue = response.Ratings[0].Value,
-                    rating = parseFloat(ratingValue),
-                    moviePlot = response.Plot,
-                    moviePoster = response.Poster,
-                    movieYear = response.Year,
-                    movieRated = response.Rated,
-                    movieGenre = response.Genre,
-                    directedBy = response.Director,
-                    boxOffice = response.BoxOffice,
-                    movieTitle = response.Title;
-                app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy, this.idCounter);
-                app.wikiAPI(movieTitle, rating, boxOffice);
-                app.getWikiUrl(movieTitle, this.idCounter);
+        var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy"; 
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function(response) {
+    
+                if (response.Response === "True" && app.moviesObjs.length < 2){
+                    $('#movieNotFound').text('');
+                    console.log(response);
+                    var ratingName = response.Ratings[0].Source,
+                        ratingValue = response.Ratings[0].Value,
+                        rating = parseFloat(ratingValue),
+                        moviePlot = response.Plot,
+                        moviePoster = response.Poster,
+                        movieYear = response.Year,
+                        movieRated = response.Rated,
+                        movieGenre = response.Genre,
+                        directedBy = response.Director,
+                        boxOffice = response.BoxOffice,
+                        movieTitle = response.Title;
+                    app.movieCards(movie, moviePlot, moviePoster, movieYear, movieRated, movieGenre, directedBy, this.idCounter);
+                    app.wikiAPI(movieTitle, rating, boxOffice);
+                    app.getWikiUrl(movieTitle, this.idCounter);
 
-            } else {
-                $('#movieNotFound').text('Movie Not Found :-(');
-            }
-            
-        });
-        
+                } if (response.Response === "True" && app.moviesObjs.length === 1){
+                    $("input").prop("disabled", true);
+                    $("#comment").text("Click compare button to compare your movies now!")
+                    function blinker(){
+                    $("#compareMovies").fadeOut(300);
+                    $("#compareMovies").fadeIn(300);
+                    }
+                    setInterval(blinker,1000);
+                } else {
+                    $('#movieNotFound').text('Movie Not Found :-(');
+                }
+
+                console.log("moviesObjs: " + app.moviesObjs.length);
+            });
+
+
+
         el.val('');
+
     },
     getRecent(){
         $('#recentSearch').empty();
