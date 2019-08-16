@@ -120,7 +120,20 @@ h4, h5, h6 {
     position: absolute;
     right: 1em;
     top: 1em;
+    color: var(--color-dark-trans);
+    transition: color .5s linear;
 }
+
+#results-wrap .button-close i{
+    font-size: 2em;
+}
+
+
+#results-wrap .button-close:hover{
+    color: var(--color-dark);
+}
+
+
 
 .chip{
     cursor: pointer;

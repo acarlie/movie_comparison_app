@@ -158,6 +158,11 @@ var app = {
         $("#results-wrap").show();
         
     },
+    blinker(){
+        $("#compareMovies").fadeOut(300);
+        $("#compareMovies").fadeIn(300);
+        console.log('blink');
+    },
     getOMDB(movie){ 
 
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy"; 
@@ -177,14 +182,12 @@ var app = {
                 app.wikiAPI(response.Title, rating, response.BoxOffice);
                 app.getWikiUrl(response.Title, this.idCounter);
 
-            } else if (response.Response === "True" && app.moviesObjs.length > 0){
-                $("input").prop("disabled", true);
-                $("#comment").text("Click compare button to compare your movies now!")
-                function blinker(){
-                    $("#compareMovies").fadeOut(300);
-                    $("#compareMovies").fadeIn(300);
-                }
-                app.blinkerInterval = setInterval(blinker, 1000);
+                if (app.moviesObjs.length === 1){
+                    $("input").prop("disabled", true);
+                    $("#comment").text("Click compare button to compare your movies now!");
+                    app.blinkerInterval = setInterval(app.blinker, 1000);
+                } 
+
             } else {
                 $('#movieNotFound').text('Movie Not Found :-(');
             }
