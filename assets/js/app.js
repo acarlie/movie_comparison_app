@@ -115,22 +115,27 @@ var app = {
         ul.append(rated, genre, director);
         wrap.append(title, btnDelete);
         movieWrap.append(wrap,poster, plot, ul);
-        $('#addedMovies').prepend(movieWrap);
+        $('#addedMovies').prepend(movieWrap);        
     },
     compare(movie){
         event.preventDefault();
         app.compare = true;
+
+        console.log(app.moviesObjs);
         
         if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
-            app.generateChart($("#results1"), 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
+            app.generateChart("results1", 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
         } 
 
         if (app.moviesObjs[0].budget !== undefined && app.moviesObjs[1].budget !== undefined){
-            app.generateChart($("#results2"), 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+            app.generateChart("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
         }
 
-        app.generateChart($("#results3"), 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
+        app.generateChart("results3", 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
         app.generateHeader();
+
+        $("#clear-button").show();
+        
     },
         
         //generate comparison page
@@ -159,9 +164,12 @@ var app = {
         
     },
     generateChart(param1, param2, param3, param4) {
+        var canvas = $("<canvas>").attr('id', param1);
+        $("#chart-container").append(canvas);
+
         // var ratingA = parseInt(app.moviesObjs[0].rating);
         // var ratingB = parseInt(app.moviesObjs[1].rating);
-        var ctx = $(param1);
+        var ctx = $('#' + param1);
         var myChart1 = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -193,6 +201,8 @@ var app = {
         duration: 3000
 
     });
+
+
     },
     generateHeader() {
         $("#movie-title1").text(app.moviesObjs[0].name);
@@ -201,13 +211,12 @@ var app = {
     },
 }
 
-
-
 $(document).ready(function(){
 
     $("#vs").hide();
 
-  
+    $("#clear-button").hide();
+
     $(document).on('click', '.button-delete', app.deleteAddedMovie);
 
     $('#compareMovies').on('click', app.compare);
@@ -220,8 +229,17 @@ $(document).ready(function(){
         } 
 
     });
-    
+
+    $("#clear-button").on("click", function() {
+        $("#addedMovies").empty();
+        $("#movie-title1").empty();
+        $("#vs").hide();
+        $("#movie-title2").empty();
+        $("#chart-container").empty();
+        app.moviesObjs = [];
+        console.log(app.moviesObjs);
+        console.log("click");
+        $("#clear-button").hide();
+    });
 
 });
-
-
