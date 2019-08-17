@@ -12,7 +12,6 @@ var app = {
         if(isInput){
              movie = el.val();
              this.chipGen(el);
-            
         }
         else{
              movie = el.attr('data-subject');
@@ -230,8 +229,9 @@ var app = {
         
     },
     generateChart(param1, param2, param3, param4) {
-        var canvas = $("<canvas>").attr('id', param1);
         $("#chart-container").append(canvas);
+
+        var canvas = $("<canvas>").attr('id', param1);
 
         // var ratingA = parseInt(app.moviesObjs[0].rating);
         // var ratingB = parseInt(app.moviesObjs[1].rating);
@@ -244,12 +244,12 @@ var app = {
                 label: param2,
                 data: [param3, param4],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(238, 9, 121, .4)',
+                    'rgba(8, 196, 159, .4)',
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
+                    'rgba(238, 9, 121, 1)',
+                    'rgba(8, 196, 159, 1)',
                 ],
                 borderWidth: 1,
             }]
