@@ -44,7 +44,10 @@ var app = {
     },
     chipGen(el){
         var movie= el.val();
-        app.recentSearch.push(movie);
+        app.recentSearch.unshift(movie);
+        if(app.recentSearch.length > 5){
+            app.recentSearch.pop();
+        }
         console.log(app.recentSearch);
                 
                     // Save back to localStorage
