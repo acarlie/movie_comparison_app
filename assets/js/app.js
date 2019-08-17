@@ -171,23 +171,23 @@ var app = {
         console.log(app.moviesObjs);
         console.log("GROSS " + app.moviesObjs.gross);
         if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
-            app.generateChart("results1", 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
+            app.generateChart1("results1", 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
         } 
 
         if (app.moviesObjs[0].budget !== undefined && app.moviesObjs[1].budget !== undefined){
-            app.generateChart("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+            app.generateChart2("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
         }
 
         if (app.moviesObjs[0].rating !== undefined && app.moviesObjs[1].rating !== undefined) {
-        app.generateChart("results3", 'Internet Movie Data', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
+        app.generateChart2("results3", 'Internet Movie Data', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
         }
 
         if (app.moviesObjs[0].rating2 !== undefined && app.moviesObjs[1].rating2 !== undefined) {
-            app.generateChart("results4", 'Rotten Tomatoes', app.moviesObjs[0].rating2, app.moviesObjs[1].rating2);
+            app.generateChart2("results4", 'Rotten Tomatoes', app.moviesObjs[0].rating2, app.moviesObjs[1].rating2);
         }
         
         if (app.moviesObjs[0].rating3 !== undefined && app.moviesObjs[1].rating3 !== undefined) {
-        app.generateChart("results5", 'Metacritic', app.moviesObjs[0].rating3, app.moviesObjs[1].rating3);
+        app.generateChart2("results5", 'Metacritic', app.moviesObjs[0].rating3, app.moviesObjs[1].rating3);
         }
 
         app.generateHeader();
@@ -253,7 +253,10 @@ var app = {
 
         
     },
-    generateChart(param1, param2, param3, param4) {
+
+    generateChart1(param1, param2, param3, param4) {
+        var canvas = $("<canvas>").attr('id', param1);
+
         $("#chart-container").append(canvas);
 
         var canvas = $("<canvas>").attr('id', param1);
@@ -262,7 +265,7 @@ var app = {
         // var ratingB = parseInt(app.moviesObjs[1].rating);
         var ctx = $('#' + param1);
         var myChart1 = new Chart(ctx, {
-        type: 'bar',
+        type: 'horizontalBar',
         data: {
             labels: [app.moviesObjs[0].name, app.moviesObjs[1].name],
             datasets: [{
@@ -280,13 +283,80 @@ var app = {
             }]
         },
         options: {
+            legend: { 
+                display: false
+            },
+                title: {
+                    display: true,
+                    text: param2
+                },
+            tooltips: {
+                callbacks: {
+                    label: function(t, d) {
+                        var xLabel = d.datasets[t.datasetIndex].label;
+                        var yLabel = t.yLabel >= 1000 ? '$' + t.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '$' + t.yLabel;
+                        return xLabel + ': ' + yLabel;
+                    }
+                }
+            },
             scales: {
-                yAxes: [{
+                xAxes: [{
                     ticks: {
+                        callback: function(value, index, values) {
+                            if (parseInt(value) >= 1000) {
+                                return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            } else {
+                                return '$' + value;
+                            }
+                        },
                         beginAtZero: true
                     }
                 }]
             }
+        },
+        aspectRatio: 1,
+        duration: 3000
+        })
+    },
+    generateChart2(param1, param2, param3, param4) {
+        var canvas = $("<canvas>").attr('id', param1);
+        $("#chart-container").append(canvas);
+
+        // var ratingA = parseInt(app.moviesObjs[0].rating);
+        // var ratingB = parseInt(app.moviesObjs[1].rating);
+        var ctx = $('#' + param1);
+        var myChart1 = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: [app.moviesObjs[0].name, app.moviesObjs[1].name],
+            datasets: [{
+                data: [param3, param4],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(54, 162, 235, 0.4)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                ],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            legend: { 
+                display: false
+            },
+                title: {
+                    display: true,
+                    text: param2
+                },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
         },
         aspectRatio: 1,
         duration: 3000
