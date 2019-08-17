@@ -75,13 +75,13 @@ var app = {
 
 
             var boxOff;
-            if (boxOffice === undefined){
+            if (boxOffice === undefined || boxOffice === NaN){
                 if (gross !== undefined){
                     boxOff = gross;
                 } else if (box !== undefined){
                     boxOff = box;
                 } else {
-                    boxOff = undefined;
+                    boxOff = '';
                 }
             } else {
                 boxOff = boxOffice;
@@ -117,8 +117,10 @@ var app = {
         } else if (total.indexOf("billion")>-1){
             totalInt = parseFloat(total) * 1000000000;
         }
-        console.log(totalInt)
-        return totalInt;
+
+        var returnNum = app.isDefined(totalInt, false, false);
+
+        return returnNum;
     },
     getWikiUrl(movie, id){
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + movie + '&limit=1&format=json&origin=*&callback=';
@@ -170,23 +172,23 @@ var app = {
         clearInterval(app.blinkerInterval);
         console.log(app.moviesObjs);
         console.log("GROSS " + app.moviesObjs.gross);
-        if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
+        if(app.moviesObjs[0].gross !== '' && app.moviesObjs[1].gross !== ''){
             app.generateChart1("results1", 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
         } 
 
-        if (app.moviesObjs[0].budget !== undefined && app.moviesObjs[1].budget !== undefined){
+        if (app.moviesObjs[0].budget !== '' && app.moviesObjs[1].budget !== ''){
             app.generateChart2("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
         }
 
-        if (app.moviesObjs[0].rating !== undefined && app.moviesObjs[1].rating !== undefined) {
+        if (app.moviesObjs[0].rating !== '' && app.moviesObjs[1].rating !== '') {
         app.generateChart2("results3", 'Internet Movie Data', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
         }
 
-        if (app.moviesObjs[0].rating2 !== undefined && app.moviesObjs[1].rating2 !== undefined) {
+        if (app.moviesObjs[0].rating2 !== '' && app.moviesObjs[1].rating2 !== '') {
             app.generateChart2("results4", 'Rotten Tomatoes', app.moviesObjs[0].rating2, app.moviesObjs[1].rating2);
         }
         
-        if (app.moviesObjs[0].rating3 !== undefined && app.moviesObjs[1].rating3 !== undefined) {
+        if (app.moviesObjs[0].rating3 !== '' && app.moviesObjs[1].rating3 !== '') {
         app.generateChart2("results5", 'Metacritic', app.moviesObjs[0].rating3, app.moviesObjs[1].rating3);
         }
 
@@ -201,6 +203,20 @@ var app = {
         $("#compareMovies").fadeIn(300);
         console.log('blink');
     },
+    isDefined(i, isCurrency, float){
+        if (i === undefined){
+            console.log('undefined ' + i);
+            return '';
+        } else if (i !== undefined && !float){
+            return i;
+        } else if (i !== undefined && !isCurrency && float){
+            return parseFloat(i.Value);
+        } else if(i !== undefined && isCurrency && float){
+            var str1 = i.replace(/,/g, "");
+            var str2 = str1.replace("$", "");
+            return parseFloat(str2);
+        } 
+    },
     getOMDB(movie){ 
 
         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy"; 
@@ -213,22 +229,13 @@ var app = {
             if (response.Response === "True" && app.moviesObjs.length < 2){
                 $('#movieNotFound').text('');
                 console.log(response);
-                var ratingValue = response.Ratings[0].Value,
-                    rottenTomatoes = response.Ratings[1].Value,
-                    metacritic = response.Ratings[2].Value;
-                    
-                var rating = parseFloat(ratingValue),
-                    rating2 = parseInt(rottenTomatoes),
-                    rating3 = parseFloat(metacritic)
-                    box1 = response.BoxOffice.replace(/,/g, "");
-                    box2 = box1.replace("$", "")
-                    boxOffice = parseInt(box2);
-
-                    console.log("BOX 2: " + box2)
-                    
+                var ratingValue = app.isDefined(response.Ratings[0], false, true),
+                    rottenTomatoes = app.isDefined(response.Ratings[1], false, true),
+                    metaCritic = app.isDefined(response.Ratings[2], false, true),
+                    boxOffice = app.isDefined(response.BoxOffice, true, true);
 
                 app.movieCards(movie, response.Plot, response.Poster, response.Year, response.Rated, response.Genre, response.Director, this.idCounter);
-                app.wikiAPI(response.Title, rating, rating2, rating3, boxOffice);
+                app.wikiAPI(response.Title, ratingValue, rottenTomatoes, metaCritic, boxOffice);
                 app.getWikiUrl(response.Title, this.idCounter);
 
                 if (app.moviesObjs.length === 1){
@@ -253,7 +260,6 @@ var app = {
 
         
     },
-
     generateChart1(param1, param2, param3, param4) {
         var canvas = $("<canvas>").attr('id', param1);
 
@@ -319,8 +325,11 @@ var app = {
         })
     },
     generateChart2(param1, param2, param3, param4) {
+        var chartWrap = $('<div>').addClass('chart-wrap');
+        var chartTitle = $('<h4>').addClass('chart-title').text(param2);
         var canvas = $("<canvas>").attr('id', param1);
-        $("#chart-container").append(canvas);
+        chartWrap.append(chartTitle, canvas)
+        $("#chart-container").append(chartWrap);
 
         // var ratingA = parseInt(app.moviesObjs[0].rating);
         // var ratingB = parseInt(app.moviesObjs[1].rating);
