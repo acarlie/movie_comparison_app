@@ -36,8 +36,10 @@ var app = {
         }
 
         for(var j = 0; j<app.recentSearch.length; j++){
-            var searchButtons = $("<div>").addClass("chip").attr("data-subject", app.recentSearch[j]);
-            searchButtons.text(app.recentSearch[j]);
+            var searchButtons = $("<div>").addClass("chip");
+            var searchTitle = $('<span>').addClass("chipSearch").text(app.recentSearch[j]).attr("data-subject", app.recentSearch[j]);
+            var searchClose = $('<span>').addClass('chipClose').html('<i class="close material-icons">close</i>').attr("data-subject", app.recentSearch[j]);
+            $(searchButtons).append(searchTitle, searchClose);
             $("#recentSearch").append(searchButtons);
         }
     },
@@ -334,11 +336,25 @@ $(document).ready(function(){
         $("#comment").text("");
     });
 
-    $(document).on('click', ".chip", function (e){ 
+    $(document).on('click', ".chipSearch", function (e){ 
         e.preventDefault();
         var el = $(this);
         app.addMovie(el, false);
+        console.log("search");
         
     });
+    $(document).on('click', ".chipClose", function (e){
+        event.preventDefault();
+        var subject = $(this).attr("data-subject");
+        app.recentSearch = app.recentSearch.filter(function(ele){
+            return ele != subject;
+            
+        });
+        localStorage.setItem("search", JSON.stringify(app.recentSearch));
+        console.log(subject);
+        console.log(app.recentSearch);
+        console.log("delete");
+    
 
+});
 });
