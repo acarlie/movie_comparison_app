@@ -169,7 +169,7 @@ var app = {
         event.preventDefault();
         clearInterval(app.blinkerInterval);
         console.log(app.moviesObjs);
-        
+        console.log("GROSS " + app.moviesObjs.gross);
         if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
             app.generateChart("results1", 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
         } 
@@ -233,11 +233,13 @@ var app = {
 
                 if (app.moviesObjs.length === 1){
                     $("input").prop("disabled", true);
-                    $("#comment").text("Click compare button to compare your movies now!");
+                    $("#comment").text("Click compare button to compare your movies!");
                     app.blinkerInterval = setInterval(app.blinker, 1000);
+                    
                 } 
 
-            } else {
+            } 
+            if (response.Response !== "True") {
                 $('#movieNotFound').text('Movie Not Found :-(');
             }
 
