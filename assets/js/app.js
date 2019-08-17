@@ -73,12 +73,13 @@ var app = {
             var gross = app.getWiki(pages, id, "gross");
             var box = app.getWiki(pages, id, "box office");
 
-
+            console.log(typeof boxOffice);
             var boxOff;
-            if (boxOffice === undefined || boxOffice === NaN){
-                if (gross !== undefined){
+            if (boxOffice === undefined || isNaN(boxOffice) === true){
+                console.log('BOX OFFICE IS NAN IN WIKI API');
+                if (gross !== undefined || isNaN(gross) === false){
                     boxOff = gross;
-                } else if (box !== undefined){
+                } else if (box !== undefined || isNaN(box) === false){
                     boxOff = box;
                 } else {
                     boxOff = '';
@@ -233,6 +234,10 @@ var app = {
                     rottenTomatoes = app.isDefined(response.Ratings[1], false, true),
                     metaCritic = app.isDefined(response.Ratings[2], false, true),
                     boxOffice = app.isDefined(response.BoxOffice, true, true);
+
+                console.log(boxOffice + ' BOX OFFICE');
+                console.log(typeof boxOffice + ' in GET OMDB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
+
 
                 app.movieCards(movie, response.Plot, response.Poster, response.Year, response.Rated, response.Genre, response.Director, this.idCounter);
                 app.wikiAPI(response.Title, ratingValue, rottenTomatoes, metaCritic, boxOffice);
