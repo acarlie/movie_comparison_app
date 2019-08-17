@@ -46,8 +46,10 @@ var app = {
                     // $(existing).push(JSON.stringify(movie));
                     // localStorage.setItem('search', existing.toString());
     },
-    wikiAPI(movie, rating, boxOffice){
+    wikiAPI(movie, rating, rating2, rating3, boxOffice){
         var queryUrl = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=' + movie + '&rvsection=0';
+
+         console.log("Rating 2 in WikiAPI: " + rating2);
 
         $.ajax({
             url: queryUrl,
@@ -57,23 +59,31 @@ var app = {
             var id = Object.getOwnPropertyNames(pages);
             var budget = app.getWiki(pages, id, "budget");
             var gross = app.getWiki(pages, id, "gross");
+            var box = app.getWiki(pages, id, "box office");
+
 
             var boxOff;
             if (boxOffice === undefined){
-                boxOff = gross;
+                if (gross !== undefined){
+                    boxOff = gross;
+                } else if (box !== undefined){
+                    boxOff = box;
+                } else {
+                    boxOff = undefined;
+                }
             } else {
                 boxOff = boxOffice;
             }
             
-            var boxOffice = app.getWiki(pages, id, "box office");
             // console.log(movie + ' Box Office: ' + boxOffice);
             // console.log(movie + ' Budget: ' + budget);
             // console.log(movie + ' Gross: ' + gross);
 
-            var movieObj = { id: app.idCounter, name: movie, rating: rating, budget: budget, gross: boxOff };
+            var movieObj = { id: app.idCounter, name: movie, rating: rating, rating2: rating2, rating3: rating3, budget: budget, gross: boxOff};
             app.moviesObjs.push(movieObj);
             
             console.log(app.moviesObjs);
+            
         });
 
     },
@@ -156,7 +166,18 @@ var app = {
             app.generateChart("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
         }
 
-        app.generateChart("results3", 'Rotten Tomatoes Score', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
+        if (app.moviesObjs[0].rating !== undefined && app.moviesObjs[1].rating !== undefined) {
+        app.generateChart("results3", 'Internet Movie Data', app.moviesObjs[0].rating, app.moviesObjs[1].rating);
+        }
+
+        if (app.moviesObjs[0].rating2 !== undefined && app.moviesObjs[1].rating2 !== undefined) {
+            app.generateChart("results4", 'Rotten Tomatoes', app.moviesObjs[0].rating2, app.moviesObjs[1].rating2);
+        }
+        
+        if (app.moviesObjs[0].rating3 !== undefined && app.moviesObjs[1].rating3 !== undefined) {
+        app.generateChart("results5", 'Metacritic', app.moviesObjs[0].rating3, app.moviesObjs[1].rating3);
+        }
+
         app.generateHeader();
 
         $("#search-wrap").hide();
@@ -180,11 +201,22 @@ var app = {
             if (response.Response === "True" && app.moviesObjs.length < 2){
                 $('#movieNotFound').text('');
                 console.log(response);
-                var ratingName = response.Ratings[0].Source,
-                    ratingValue = response.Ratings[0].Value,
-                    rating = parseFloat(ratingValue);
+                var ratingValue = response.Ratings[0].Value,
+                    rottenTomatoes = response.Ratings[1].Value,
+                    metacritic = response.Ratings[2].Value;
+                    
+                var rating = parseFloat(ratingValue),
+                    rating2 = parseInt(rottenTomatoes),
+                    rating3 = parseFloat(metacritic)
+                    box1 = response.BoxOffice.replace(/,/g, "");
+                    box2 = box1.replace("$", "")
+                    boxOffice = parseInt(box2);
+
+                    console.log("BOX 2: " + box2)
+                    
+
                 app.movieCards(movie, response.Plot, response.Poster, response.Year, response.Rated, response.Genre, response.Director, this.idCounter);
-                app.wikiAPI(response.Title, rating, response.BoxOffice);
+                app.wikiAPI(response.Title, rating, rating2, rating3, boxOffice);
                 app.getWikiUrl(response.Title, this.idCounter);
 
                 if (app.moviesObjs.length === 1){
@@ -198,27 +230,13 @@ var app = {
             }
 
             console.log("moviesObjs: " + app.moviesObjs.length);
+
+            console.log(response)
+            
+            console.log("RATING2" + rottenTomatoes)
+
         });
 
-    //     for (var i = 0; i < 2 ; i++) {
-    //         var movie = app.moviesArray[i]
-    //         var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-        
-    //         $.ajax({
-    //             url: queryURL,
-    //             method: "GET"
-    //         }).then(function(response) {
-    //             var ratingName = response.Ratings[0].Source;
-    //             var ratingValue = response.Ratings[0].Value;
-    //             var valueNumber = ratingValue.slice(0,3);
-        
-    //             console.log(response)
-    //             console.log(ratingName);
-    //             console.log(ratingValue);
-    //             console.log(valueNumber)
-                
-    //         });     
-    // }
         
     },
     generateChart(param1, param2, param3, param4) {
