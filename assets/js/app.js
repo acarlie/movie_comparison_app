@@ -12,7 +12,6 @@ var app = {
         if(isInput){
              movie = el.val();
              this.chipGen(el);
-            
         }
         else{
              movie = el.attr('data-subject');
@@ -37,8 +36,10 @@ var app = {
         }
 
         for(var j = 0; j<app.recentSearch.length; j++){
-            var searchButtons = $("<div>").addClass("chip").attr("data-subject", app.recentSearch[j]);
-            searchButtons.text(app.recentSearch[j]);
+            var searchButtons = $("<div>").addClass("chip");
+            var searchTitle = $('<span>').addClass("chipSearch").text(app.recentSearch[j]).attr("data-subject", app.recentSearch[j]);
+            var searchClose = $('<span>').addClass('chipClose').html('<i class="close material-icons">close</i>').attr("data-subject", app.recentSearch[j]);
+            $(searchButtons).append(searchTitle, searchClose);
             $("#recentSearch").append(searchButtons);
         }
     },
@@ -168,7 +169,7 @@ var app = {
         event.preventDefault();
         clearInterval(app.blinkerInterval);
         console.log(app.moviesObjs);
-        
+        console.log("GROSS " + app.moviesObjs.gross);
         if(app.moviesObjs[0].gross !== undefined && app.moviesObjs[1].gross !== undefined){
             app.generateChart1("results1", 'Box Office Total', app.moviesObjs[0].gross, app.moviesObjs[1].gross);
         } 
@@ -232,11 +233,13 @@ var app = {
 
                 if (app.moviesObjs.length === 1){
                     $("input").prop("disabled", true);
-                    $("#comment").text("Click compare button to compare your movies now!");
+                    $("#comment").text("Click compare button to compare your movies!");
                     app.blinkerInterval = setInterval(app.blinker, 1000);
+                    
                 } 
 
-            } else {
+            } 
+            if (response.Response !== "True") {
                 $('#movieNotFound').text('Movie Not Found :-(');
             }
 
@@ -250,9 +253,13 @@ var app = {
 
         
     },
+
     generateChart1(param1, param2, param3, param4) {
         var canvas = $("<canvas>").attr('id', param1);
+
         $("#chart-container").append(canvas);
+
+        var canvas = $("<canvas>").attr('id', param1);
 
         // var ratingA = parseInt(app.moviesObjs[0].rating);
         // var ratingB = parseInt(app.moviesObjs[1].rating);
@@ -265,12 +272,12 @@ var app = {
                 label: param2,
                 data: [param3, param4],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.4)',
-                    'rgba(54, 162, 235, 0.4)',
+                    'rgba(238, 9, 121, .4)',
+                    'rgba(8, 196, 159, .4)',
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
+                    'rgba(238, 9, 121, 1)',
+                    'rgba(8, 196, 159, 1)',
                 ],
                 borderWidth: 1,
             }]
@@ -401,11 +408,25 @@ $(document).ready(function(){
         $("#comment").text("");
     });
 
-    $(document).on('click', ".chip", function (e){ 
+    $(document).on('click', ".chipSearch", function (e){ 
         e.preventDefault();
         var el = $(this);
         app.addMovie(el, false);
+        console.log("search");
         
     });
+    $(document).on('click', ".chipClose", function (e){
+        event.preventDefault();
+        var subject = $(this).attr("data-subject");
+        app.recentSearch = app.recentSearch.filter(function(ele){
+            return ele != subject;
+            
+        });
+        localStorage.setItem("search", JSON.stringify(app.recentSearch));
+        console.log(subject);
+        console.log(app.recentSearch);
+        console.log("delete");
+    
 
+});
 });
