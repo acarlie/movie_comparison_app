@@ -5,17 +5,25 @@ var app = {
     idCounter: 0,
     recentSearch: [],
     blinkerInterval: '',
-    addMovie(el){
+    addMovie(el, isInput){
         event.preventDefault();
+        var movie;
+        
+        if(isInput){
+             movie = el.val();
+             this.chipGen(el);
+            
+        }
+        else{
+             movie = el.attr('data-subject');
+        }
 
-        var movie = el.val();
-
-        this.idCounter++ 
-        this.chipGen(el);
+        this.idCounter++;
         this.getOMDB(movie);
         // this.moviesArray.push(movie);
 
         el.val('');
+
 
     },
     getRecent(){
@@ -271,6 +279,7 @@ var app = {
 
 $(document).ready(function(){
     console.log(localStorage);
+    // localStorage.clear();
 
 
     $("#results-wrap").hide();
@@ -285,7 +294,7 @@ $(document).ready(function(){
         var key = e.which;
         var el = $(this);
         if(key == 13){
-            app.addMovie(el);
+            app.addMovie(el, true);
         } 
 
     });
@@ -302,6 +311,13 @@ $(document).ready(function(){
         $('#search-wrap').show();
         $("input").prop("disabled", false);
         $("#comment").text("");
+    });
+
+    $(document).on('click', ".chip", function (e){ 
+        e.preventDefault();
+        var el = $(this);
+        app.addMovie(el, false);
+        
     });
 
 });
