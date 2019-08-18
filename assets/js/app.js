@@ -297,18 +297,19 @@ var app = {
                     text: param2
                 },
             tooltips: {
+                // label: [param3, param4]
                 callbacks: {
                     label: function(t, d) {
-                        var xLabel = d.datasets[t.datasetIndex].label;
-                        var yLabel = t.yLabel >= 1000 ? '$' + t.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '$' + t.yLabel;
-                        return xLabel + ': ' + yLabel;
+                        var xLabel = d.xLabel >= 1000 ? + d.xLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '$' + t.xLabel;
+                        console.log(xLabel);
+                        return xLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     }
                 }
             },
             scales: {
                 xAxes: [{
                     ticks: {
-                        callback: function(value, index, values) {
+                        callback: function(value) {
                             if (parseInt(value) >= 1000) {
                                 return '$' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                             } else {
@@ -322,7 +323,7 @@ var app = {
         },
         aspectRatio: 1,
         duration: 3000
-        })
+    })
     },
     generateChart2(param1, param2, param3, param4) {
         var chartWrap = $('<div>').addClass('chart-wrap');
