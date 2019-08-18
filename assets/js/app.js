@@ -178,7 +178,7 @@ var app = {
         } 
 
         if (app.moviesObjs[0].budget !== '' && app.moviesObjs[1].budget !== ''){
-            app.generateChart2("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
+            app.generateChart1("results2", 'Budget', app.moviesObjs[0].budget, app.moviesObjs[1].budget);
         }
 
         if (app.moviesObjs[0].rating !== '' && app.moviesObjs[1].rating !== '') {
