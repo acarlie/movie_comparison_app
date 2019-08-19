@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+
     <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
@@ -17,64 +18,65 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <!-- Chart.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css">            
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/style.css">
 
     <title>Movie Comparison App</title>
 </head>
+
 <body>
-    <!-- We'll hide this wrapper when the user compares -->
+
+    <!-- Search -->
     <div id="search-wrap" class="wrapper">
         <div class="container">
             <div class="row">
                 <div class="col s12">
-                    <h1 class="center-align shadow">Movie Stats <!-- <span class="material-icons">local_movies</span> --> </h1>
+
+                    <h1 class="center-align shadow">Movie Stats</h1>
+
                     <form class="movie-form" action="">
                         <div class="input-field sub-row">
                             <i class="material-icons prefix">add</i>
                             <input id="addMovie" type="text" class="validate">
-                            <label for="addMovie" id = "comment">Enter a Movie to Compare</label>
+                            <label for="addMovie" id="comment">Enter a Movie to Compare</label>
                             <span id="movieNotFound" class="helper-text"></span>
                         </div>
-                        
+
                         <div id="recentSearch" class="sub-row">
 
                         </div>
 
                         <div id="addedMovies" class="sub-row">
-    
+
                         </div>
-        
-                        <button class="btn waves-effect waves-light button button-outline button-block" type="submit" name="action" id="compareMovies">Compare</button>
+
+                        <button class="btn waves-effect waves-light button button-outline button-block" type="submit"
+                            name="action" id="compareMovies">Compare</button>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- We'll show this wrapper when the user compares -->
+
+    <!-- Results -->
     <div id="results-wrap" class="wrapper">
         <a id="clear-button" class="button button-close"><i class="material-icons">clear</i></a>
         <div class="container">
             <div class="row">
                 <div class="col s12">
                     <h2 class="center-align"><span id="movie-title1"></span> <span class="vs">vs.</span> <span id="movie-title2"></span></h2>
-                        <div id="chart-container">
-                            <!-- Results go here, append each chart in wrapper divs -->
-                        </div>
-                </div>  
+                    <div id="chart-container">
+                        <!-- Charts -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
-    
-    
-
-
-
 
     <script src="assets/js/app.js"></script>
 </body>
