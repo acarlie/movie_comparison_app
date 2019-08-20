@@ -196,6 +196,9 @@ var app = {
         $('#search-wrap').show();
         $("input").prop("disabled", false);
         $("#comment").text("");
+
+        clearInterval(app.blinkerInterval);
+
     },
     isDefined(i, isCurrency, float) {
         if (i === undefined) {
