@@ -6,11 +6,12 @@
 
 /*-------------------Variables-------------------*/
 :root{
-    --color-primary: #ee0979;
-    --color-primary-darker: #de0979;
-    --color-secondary: #ff6a00;
-    --color-light: #fff;
-    --color-light-trans: rgba(255,255,255, .5);
+    --color-primary: rgba(238, 9, 121, 1); 
+    --color-primary-trans:  rgba(238, 9, 121, .5);
+    --color-primary-darker: #d40875;
+    --color-secondary: #fd2c1d;
+    --color-light:  rgba(235,235,235, 1);;
+    --color-light-trans: rgba(235,235,235, .5);
     --color-dark: #333;
     --color-dark-trans: rgba(0,0,0, .3);
 }
@@ -24,6 +25,10 @@ h4, h5, h6 {
     font-weight: 500;
 }
 
+h1 {
+    color: var(--color-light);
+}
+
 h2 {
  font-size: 2.25em;
 }
@@ -35,11 +40,11 @@ h2 {
 /*-------------------Layout-------------------*/
 .wrapper{
     min-height: 100vh;
-    padding-bottom: 3em;
+    padding: 3em 0;
 }
 
 .container{
-    width: 90%;
+    width: 95%;
 }
 
 .row{
@@ -48,18 +53,30 @@ h2 {
 }
 
 .sub-row{
-    margin-bottom: 1em;
-}
-
-.shadow{
-    text-shadow: 4px 4px var(--color-primary-darker);
+    margin-bottom: 1.5em;
 }
 
 /*-------------------Search Wrap-------------------*/
 #search-wrap{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(19,19,19,1);
+    background: -webkit-linear-gradient(90deg, rgba(60,60,60,1), rgba(19,19,19,1));
+    background: linear-gradient(90deg, rgba(60,60,60,1), rgba(19,19,19,1));
+}
+
+#search-cont{
+    padding: 2em 1em;
+    border-radius: 2em;
+    color: var(--color-light);
     background: var(--color-primary); 
     background: -webkit-linear-gradient(to right, var(--color-secondary), var(--color-primary)); 
     background: linear-gradient(to right, var(--color-secondary), var(--color-primary)); 
+}
+
+#search-cont h1{
+    margin-top: 0;
 }
 
 #search-wrap, #search-wrap input{
@@ -68,6 +85,93 @@ h2 {
 
 #search-wrap .helper-text{
     color: var(--color-light);
+}
+
+#comment{
+    color: var(--color-light);
+}
+
+
+/*-------------------Chips-------------------*/
+.chip{
+    background: none;
+    text-transform: capitalize;
+    cursor: pointer;
+    color: var(--color-light);
+    border: .75px solid var(--color-light);
+}
+
+.chip:hover{
+    color: var(--color-primary);
+    background-color: var(--color-light);
+}
+
+/*-------------------Movie Wrapper-------------------*/
+.close-container{
+    position: relative;
+}
+
+.movie-wrap{  
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+    border: 2px solid var(--color-primary-darker);
+    color: var(--color-dark);
+    background: var(--color-light);
+    background: -webkit-linear-gradient(90deg, #f0f0f0, #ddd);  
+    background: linear-gradient(90deg, #f0f0f0, #ddd);
+}
+
+.movie-title-wrap{ 
+    display: flex;
+    padding: 1em;
+    line-height: 4em;
+    font-size: 1.5em;
+    border-bottom: 1px solid #ddd;
+    background: var(--color-light);
+    background: -webkit-linear-gradient(90deg, #fff, #ddd);  
+    background: linear-gradient(90deg, #fff, #ddd);
+}
+
+.movie-plot-wrap{
+    padding: 1em;
+}
+
+.movie-content-wrap{
+    width: 100%;
+}
+
+.movie-title{
+    width: 100%;
+    text-transform: capitalize;
+}
+
+.movie-title, .movie-wrap .button{
+    margin: 0;
+    padding: 0;
+}
+
+.movie-poster-wrap{
+    display: flex;
+    max-height: 200px;
+    overflow: hidden;
+}
+
+.movie-poster {
+    padding: 0;
+    margin: 0;
+    align-self: center;
+    opacity: .85;
+    transition: opacity .25s linear;
+    width: 100%;
+}
+
+.movie-wrap:hover .movie-poster{
+    opacity: 1;
+}
+
+.movie-info{
+    list-style: none;
 }
 
 /*-------------------Results Wrap-------------------*/
@@ -92,12 +196,12 @@ h2 {
 
 .chart-title{
     line-height: 4em;
-    background: #ccc; 
-    background: -webkit-linear-gradient(to right, #fff, #ddd);  
-    background: linear-gradient(to right, #fff, #ddd);
     font-size: 1.5em;
     text-align: center;
     border-bottom: 1px solid #ddd;
+    background: #ccc; 
+    background: -webkit-linear-gradient(to right, #fff, #ddd);  
+    background: linear-gradient(to right, #fff, #ddd);
 }
 
 #movie-title1{
@@ -118,6 +222,7 @@ h2 {
     box-shadow: none;
     border: none;
     cursor: pointer;
+    transition: background-color 0s linear;
 }
 
 .button:focus{
@@ -129,12 +234,14 @@ h2 {
 }
 
 .button-outline{
+    border-radius: 2em;
+    color: var(--color-light);
     border: 1px solid var(--color-light);
 }
 
 .button-outline:hover, .button-outline:focus{
     background-color: var(--color-light);
-    color: var(--color-dark);
+    color: var(--color-primary);
     box-shadow: none;
 }
 
@@ -154,68 +261,23 @@ h2 {
     color: var(--color-light);
 }
 
-/*-------------------Chips-------------------*/
-.chip{
-    text-transform: capitalize;
-    cursor: pointer;
-    background-color: var(--color-light-trans);
-    border: .5px solid var(--color-light);
-    transition: background-color .5s linear;
-}
-
-.chip:hover{
-    background-color: var(--color-light);
-}
-
-/*-------------------Movie Wrapper-------------------*/
-.movie-wrap{
-    padding: 1.5em;
-    margin-bottom: 1.5em;
-    color: var(--color-dark);
-    background: var(--color-light);
-    box-shadow: 5px 5px var(--color-primary-darker);
-    overflow: auto;
-}
-
-.movie-title-wrap{
-    display: flex;
-    padding: .75em 0;
-    margin-bottom: .5em;
-    border-bottom: 1px solid var(--color-dark-trans);
-}
-
-.movie-title{
-    width: 100%;
-    text-transform: capitalize;
-}
-
-.movie-title, .movie-wrap .button{
-    margin: 0;
-    padding: 0;
-}
-
-.movie-wrap .button{
+.button-delete{
     transition: color .5s linear;
-    color: var(--color-dark-trans);
+    color: var(--color-light-trans);
+    position: absolute;
+    background-color: var(--color-primary-darker);
+    padding: 1em;
+    top: 0;
+    right: 0;
+    border-radius: 0 0 0 1.5em;
 }
 
-.movie-wrap .button:hover{
-    color: var(--color-dark);
+.button-delete:hover{
+    color: var(--color-light);
 }
 
-.movie-wrap .button:focus{
+.button-delete:focus{
     background: none;
-}
-
-.movie-poster {
-    width: 100px;
-    height: 150px;
-    float: left;
-    margin: 5px 10px 0 0 ;
-}
-
-.movie-info{
-    list-style: none;
 }
 
 /*-------------------Input Color Overrides-------------------*/
@@ -283,21 +345,55 @@ input:-webkit-autofill:active {
 }
 
 /*---------------Media Queries---------------*/
+@media only screen and (min-width: 890px) {
+    .button-delete{
+        transition: color .5s linear;
+        color: var(--color-dark-trans);
+        background-color: transparent;
+        padding: 0;
+        top: 1.5em;
+        right: 1em;
+        border-radius: 0;
+    }
+    
+    .button-delete:hover{
+        color: var(--color-dark);
+        background-color: transparent;
+    }
+
+    .movie-wrap{
+        flex-direction: row;
+    }
+
+    .movie-poster-wrap{
+        display: inline-block;
+        max-height: none;
+        overflow: hidden;
+    }
+    .movie-poster-wrap{
+        margin-bottom: -5px;
+    }
+
+    .movie-poster{
+        max-height: 400px;
+        align-self: stretch;
+
+    }
+}
+
 /*Desktop*/
-@media only screen and (min-width: 1024px) {
+@media only screen and (min-width: 1200px) {
+
     .container{
-        width: 50%;
+        width: 60%;
     }
 }
 
 /*Tablet/Ipad*/
-@media only screen and (max-width: 1023px) and (min-width: 768px) {
+@media only screen and (max-width: 1199px) and (min-width: 890px) {
+   
+
     .container{
         width: 70%;
     }
 }
-
-/* 
-@media only screen and (max-width: 767px) and (min-width: 540px) {
- 
-} */

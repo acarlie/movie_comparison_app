@@ -10,7 +10,6 @@ var app = {
 
         if (isInput) {
             movie = el.val();
-            this.chipGen(el);
         }
         else {
             movie = el.attr('data-subject');
@@ -39,8 +38,7 @@ var app = {
             $("#recentSearch").append(searchButtons);
         }
     },
-    chipGen(el) {
-        var movie = el.val();
+    chipGen(movie) {
         app.recentSearch.unshift(movie);
         if (app.recentSearch.length > 5) {
             app.recentSearch.pop();
@@ -82,7 +80,7 @@ var app = {
 
             var movieObj = { id: app.idCounter, name: movie, rating: rating, rating2: rating2, rating3: rating3, budget: budget, gross: boxOff };
             app.moviesObjs.push(movieObj);
-
+            console.log(app.moviesObjs);
         });
 
     },
@@ -121,8 +119,8 @@ var app = {
     },
     deleteAddedMovie() {
         event.preventDefault();
-        $(this).parent().parent().remove();
-        var dataNum = $(this).parent().parent().attr('data-num');
+        $(this).parent().remove();
+        var dataNum = $(this).parent().attr('data-num');
         var num = parseInt(dataNum);
         if (app.moviesObjs.length === 2) {
             $("input").prop("disabled", false);
@@ -134,25 +132,32 @@ var app = {
         });
     },
     movieCards(movie, plot, poster, year, rate, genre, director, id) {
-        var movieWrap = $('<div>').addClass('movie-wrap').attr('data-id', movie).attr('data-num', app.idCounter);
+        var outerContainer = $('<div>').addClass('close-container').attr('data-id', movie).attr('data-num', app.idCounter);
+        var movieWrap = $('<div>').addClass('movie-wrap');
         var wrap = $('<div>').addClass('movie-title-wrap');
         var title = $('<h5>').addClass('movie-title').text(movie + " (" + year + ")");
         var btnDelete = $('<button>').addClass('button button-delete').html('<i class="material-icons">close</i>');
-        var poster = $("<img>").addClass("movie-poster").attr("src", poster);
+        var contentWrap = $('<div>').addClass('movie-content-wrap');
+        var plotWrap = $('<div>').addClass('movie-plot-wrap');
+        var posterWrap = $('<div>').addClass('movie-poster-wrap');
+        var poster = $("<img>").addClass("movie-poster").attr("src", poster).appendTo(posterWrap);
         var plot = $('<div>').addClass('movie-plot').text(plot);
         var ul = $("<ul>").addClass('movie-info').attr('id', 'ul' + id);
         var rated = $("<li>").text("Rating: " + rate);
         var genre = $("<li>").text("Genre: " + genre);
         var director = $("<li>").text("Directed By: " + director);
         ul.append(rated, genre, director);
-        wrap.append(title, btnDelete);
-        movieWrap.append(wrap, poster, plot, ul);
-        $('#addedMovies').prepend(movieWrap);
+        wrap.append(title);
+        plotWrap.append(plot, ul);
+        contentWrap.append(wrap, plotWrap);
+        movieWrap.append(posterWrap, contentWrap);
+        outerContainer.append(movieWrap, btnDelete);
+        $('#addedMovies').prepend(outerContainer);
     },
-    compare(movie) {
+    compare() {
         event.preventDefault();
         clearInterval(app.blinkerInterval);
-
+        console.log(app.moviesObjs);
         app.generateChartsIfExist(app.moviesObjs[0].gross, app.moviesObjs[1].gross, 'results1', 'Box Office Total', true);
         app.generateChartsIfExist(app.moviesObjs[0].budget, app.moviesObjs[1].budget, 'results2', 'Budget', true);
         app.generateChartsIfExist(app.moviesObjs[0].rating, app.moviesObjs[1].rating, 'results3', 'Internet Movie Data', false);
@@ -215,6 +220,11 @@ var app = {
         }).then(function (response) {
 
             if (response.Response === "True" && app.moviesObjs.length < 2) {
+
+                if (app.recentSearch.indexOf(movie) === -1){
+                    app.chipGen(movie);
+                }
+                
                 $('#movieNotFound').text('');
 
                 var ratingValue = app.isDefined(response.Ratings[0], false, true),
