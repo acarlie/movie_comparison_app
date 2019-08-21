@@ -23,7 +23,6 @@ var app = {
     getRecent() {
         $('#recentSearch').empty();
         var existing = JSON.parse(localStorage.getItem('search'));
-        console.log(existing);
         if (!Array.isArray(existing)) {
             app.recentSearch = ["Die Hard", "The Emoji Movie", "Space Jam", "Avengers Endgame", "Jumanji"];
         } else {
@@ -43,7 +42,6 @@ var app = {
         if (app.recentSearch.length > 5) {
             app.recentSearch.pop();
         }
-        console.log(app.recentSearch);
 
         // Save back to localStorage
         localStorage.setItem("search", JSON.stringify(app.recentSearch));
@@ -80,7 +78,19 @@ var app = {
 
             var movieObj = { id: app.idCounter, name: movie, rating: rating, rating2: rating2, rating3: rating3, budget: budget, gross: boxOff };
             app.moviesObjs.push(movieObj);
-            console.log(app.moviesObjs);
+
+        }).fail(function() {
+
+            var boxOff;
+            if (boxOffice === undefined || isNaN(boxOffice) === true) {
+                boxOff = false;
+            } else {
+                boxOff = boxOffice;
+            }
+
+            var movieObj = { id: app.idCounter, name: movie, rating: rating, rating2: rating2, rating3: rating3, budget: false, gross: boxOff };
+            app.moviesObjs.push(movieObj);
+
         });
 
     },
@@ -115,7 +125,7 @@ var app = {
             var link = str.substring(0, end);
             var link = $('<li>').html('See on WikiPedia: <a href="' + link + '" target="_blank">' + link + '</a>');
             $('#ul' + id).append(link);
-        })
+        });
     },
     deleteAddedMovie() {
         event.preventDefault();
@@ -124,7 +134,7 @@ var app = {
         var num = parseInt(dataNum);
         if (app.moviesObjs.length === 2) {
             $("input").prop("disabled", false);
-            $("#comment").text("");
+            $("#comment").text("Enter a Movie to Compare");
             clearInterval(app.blinkerInterval);
         }
         app.moviesObjs = app.moviesObjs.filter(function (obj) {
@@ -157,7 +167,6 @@ var app = {
     compare() {
         event.preventDefault();
         clearInterval(app.blinkerInterval);
-        console.log(app.moviesObjs);
         app.generateChartsIfExist(app.moviesObjs[0].gross, app.moviesObjs[1].gross, 'results1', 'Box Office Total', true);
         app.generateChartsIfExist(app.moviesObjs[0].budget, app.moviesObjs[1].budget, 'results2', 'Budget', true);
         app.generateChartsIfExist(app.moviesObjs[0].rating, app.moviesObjs[1].rating, 'results3', 'Internet Movie Data', false);
@@ -167,6 +176,7 @@ var app = {
         app.generateHeader();
 
         $("#search-wrap").hide();
+        $('footer').hide();
         $("#results-wrap").show();
 
         $(window).scrollTop(0);
@@ -181,7 +191,6 @@ var app = {
     blinker() {
         $("#compareMovies").fadeOut(300);
         $("#compareMovies").fadeIn(300);
-        console.log('blink');
     },
     reset() {
         app.moviesObjs = [];
@@ -193,9 +202,10 @@ var app = {
         }
 
         $('#results-wrap').hide();
+        $('footer').show();
         $('#search-wrap').show();
         $("input").prop("disabled", false);
-        $("#comment").text("");
+        $("#comment").text("Enter a Movie to Compare");
 
         clearInterval(app.blinkerInterval);
 
@@ -294,7 +304,6 @@ var app = {
                     callbacks: {
                         label: function (t, d) {
                             var xLabel = d.xLabel >= 1000 ? + d.xLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '$' + t.xLabel;
-                            console.log(xLabel);
                             return xLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                         }
                     }
@@ -396,8 +405,5 @@ $(document).ready(function () {
             return ele != subject;
         });
         localStorage.setItem("search", JSON.stringify(app.recentSearch));
-        console.log(subject);
-        console.log(app.recentSearch);
-        console.log("delete");
     });
 });

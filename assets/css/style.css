@@ -39,7 +39,7 @@ h2 {
 
 /*-------------------Layout-------------------*/
 .wrapper{
-    min-height: 100vh;
+    min-height: 78vh;
     padding: 3em 0;
 }
 
@@ -56,6 +56,14 @@ h2 {
     margin-bottom: 1.5em;
 }
 
+.page-footer{
+    min-height: 22vh;
+    background: rgba(19,19,19,1);
+    background: -webkit-linear-gradient(90deg, rgba(60,60,60,1), rgba(19,19,19,1));
+    background: linear-gradient(90deg, rgba(60,60,60,1), rgba(19,19,19,1));
+    box-shadow: 0px 10px 15px -10px rgba(19,19,19,1) inset;
+}
+
 /*-------------------Search Wrap-------------------*/
 #search-wrap{
     display: flex;
@@ -67,6 +75,7 @@ h2 {
 }
 
 #search-cont{
+    box-shadow: 0px 10px 15px -10px rgba(19,19,19,.5);
     padding: 2em 1em;
     border-radius: 2em;
     color: var(--color-light);
@@ -319,6 +328,50 @@ h2 {
     color: var(--color-light);
 }
 
+/*-------------------Credits-------------------*/
+.page-footer{
+    color: #888;
+    padding-bottom: 2em;
+}
+
+.footer-title{
+    text-transform: uppercase;
+    font-size: 1.125em;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+ul#credits{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#credits li{
+    padding: .5em 2em;
+    text-align: center;
+}
+
+
+#credits li p{
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+#credits li p:last-child{
+    font-size: .8em;
+}
+
+.page-footer a:link, .page-footer a:visited, .page-footer a:active{
+    color: #888;
+}
+
+.page-footer a:hover{
+    color: #aaa;
+}
+
+
 /*-------------------Auto-fill Overrides-------------------*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -378,6 +431,14 @@ input:-webkit-autofill:active {
         max-height: 400px;
         align-self: stretch;
 
+    }
+
+    #credits li{
+        padding: 0 2em;
+    }
+
+    #credits li:not(:first-child){
+        border-left: 1px solid #444;
     }
 }
 
