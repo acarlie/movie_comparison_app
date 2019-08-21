@@ -25,7 +25,7 @@ var app = {
         var existing = JSON.parse(localStorage.getItem('search'));
         console.log(existing);
         if (!Array.isArray(existing)) {
-            app.recentSearch = [];
+            app.recentSearch = ["Die Hard", "The Emoji Movie", "Space Jam", "Avengers Endgame", "Jumanji"];
         } else {
             app.recentSearch = existing;
         }
