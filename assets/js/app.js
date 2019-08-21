@@ -134,7 +134,7 @@ var app = {
         var num = parseInt(dataNum);
         if (app.moviesObjs.length === 2) {
             $("input").prop("disabled", false);
-            $("#comment").text("");
+            $("#comment").text("Enter a Movie to Compare");
             clearInterval(app.blinkerInterval);
         }
         app.moviesObjs = app.moviesObjs.filter(function (obj) {
@@ -205,7 +205,7 @@ var app = {
         $('footer').show();
         $('#search-wrap').show();
         $("input").prop("disabled", false);
-        $("#comment").text("");
+        $("#comment").text("Enter a Movie to Compare");
 
         clearInterval(app.blinkerInterval);
 
