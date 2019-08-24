@@ -35,4 +35,10 @@ There are several movie information websites such as Rotten Tomatoes, IMDB, and 
 - Incorporation of an option to save your favorite movie comparisons and/or favorite movie listings into your local storage for selection along with the already featured recent searches.
 - Plans for adding movie trivia along with fun facts for popular movies along with all current information as well!
 
+## Our Team
+- Miran Jang / https://github.com/mjfonke
+- Frank Zachary / https://github.com/fzachary
+- Amelia Carlie / https://github.com/acarlie
+- William Whitted / https://github.com/youngedre
+
 ### See the project at: https://fzachary.github.io/project1/.
